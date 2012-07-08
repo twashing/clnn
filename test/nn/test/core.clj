@@ -1,6 +1,25 @@
 (ns nn.test.core
-  (:use [nn.core])
-  (:use [clojure.test]))
+  (:use [nn.core]
+        [clojure.test]
+        [midje.sweet]
+  )
+  (:require [nn.config.config :as config]
+  )
 
-(deftest replace-me ;; FIXME: write
-  (is false "No tests have been written."))
+)
+
+
+
+(fact "load config training file; ensure first tickis as expected"
+      (config/load-config) => truthy
+
+)
+
+
+; create neuron protocol using jodatime
+
+; create input layer
+
+; create hidden layer
+
+ ; create output layer

@@ -13,8 +13,10 @@
       dname (-> config :data :test)
      ]
 
-  (pprint/pprint (csv/parse-csv (io/reader dname)))
+  ;(pprint/pprint (csv/parse-csv (io/reader dname)))
+  (csv/parse-csv (io/reader dname))
 )
+
 
 
 ;; create neuron protocol (using jodatime)
