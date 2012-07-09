@@ -7,16 +7,9 @@
   
 )
 
-
-;; consume test data (from config)
-(let [config (load-file "etc/config.clj")
-      dname (-> config :data :test)
-     ]
-
-  ;(pprint/pprint (csv/parse-csv (io/reader dname)))
-  (csv/parse-csv (io/reader dname))
+(defn next-tick [data-seq]
+  (pprint/pprint (next data-seq))
 )
-
 
 
 ;; create neuron protocol (using jodatime)

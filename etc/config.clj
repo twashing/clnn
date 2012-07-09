@@ -1,3 +1,3 @@
 {
- :data { :test "etc/data/EURUSD_Ticks_Apr2012.csv" }
+ :data { :test "etc/data/EURUSD_Ticks_May2012.csv" }
 }
