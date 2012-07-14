@@ -1,10 +1,29 @@
 (ns nn.neuralnet
   (:require [clj-time.core :as ctime]
-            [clj-time.format :as cformat])
+            [clj-time.format :as cformat]
+            [clj-time.coerce :as ccoerce])
 )
 
-(defn linear-combiner [neuron] (println "linear-combiner function CALLED"))
-(defn activation [neuron] (println "activation function CALLED"))
+(defn linear-combiner
+  [neuron]
+
+  (println "linear-combiner function CALLED")
+
+  (ccoerce/to-long (:time neuron)) 
+)
+
+
+(defn activation
+  "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
+  [neuron]
+
+  (println "activation function CALLED")
+
+  (let [combined (linear-combiner neuron)]
+
+    
+  )
+)
 
 
 (defn get-time-format []
@@ -18,6 +37,8 @@
    :ask ask
    :bvolumne bvolume
    :avolume avolume
+
+   :threshold (rand)
    :weights {:time (rand)
              :bid (rand)
              :ask (rand)
