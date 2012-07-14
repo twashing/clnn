@@ -4,6 +4,8 @@
   )
   (:require [nn.core :as nn]
             [nn.config.config :as config]
+            [nn.neuralnet :as neuralnet]
+            [clojure.pprint :as pprint]
   )
 )
 
@@ -14,21 +16,24 @@
 )
 
 
-#_(let [train-data (config/load-config)]
-  (nn/next-tick train-data)
-)
-
-#_(fact 
- (let [train-data (config/load-config)]
-   
- )
- => truthy
+(fact "we can get the next tick"
+  (let [train-data (config/load-config)
+        next-tick (nn/next-tick train-data)]
+    (-> next-tick nil? not) => true
+    
+  )
 )
 
 
 ; create neuron protocol using jodatime
 
-; create input layer
+;(fact "create input layer"
+  (let [train-data (config/load-config)
+        input-layer (neuralnet/create-input-layer (second train-data))
+       ]
+    (pprint/pprint input-layer)
+  )
+;)
 
 ; create hidden layer
 

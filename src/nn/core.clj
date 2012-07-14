@@ -8,7 +8,7 @@
 )
 
 (defn next-tick [data-seq]
-  (pprint/pprint (next data-seq))
+  (first data-seq)
 )
 
 
