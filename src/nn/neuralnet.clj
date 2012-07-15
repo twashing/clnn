@@ -7,9 +7,15 @@
 (defn linear-combiner
   [neuron]
 
-  (println "linear-combiner function CALLED")
+  (println (str "linear-combiner function CALLED > " neuron))
 
-  (ccoerce/to-long (:time neuron)) 
+  (+ (* (-> neuron :weights :time) (ccoerce/to-long (:time neuron)))
+     (* (-> neuron :weights :bid) (:bid neuron))
+     (* (-> neuron :weights :ask) (:ask neuron))
+     (* (-> neuron :weights :bvolume) (:bvolume neuron))
+     (* (-> neuron :weights :avolume) (:avolume neuron))
+     )
+  
 )
 
 
@@ -58,10 +64,10 @@
        (fn [result next]
          (conj result (create-input-neuron
                             (cformat/parse tformat (first inputs))
-                            (second inputs)
-                            (nth inputs 2)
-                            (nth inputs 3)
-                            (nth inputs 4))))
+                            (Double/parseDouble (second inputs))
+                            (Double/parseDouble (nth inputs 2))
+                            (Double/parseDouble (nth inputs 3))
+                            (Double/parseDouble (nth inputs 4)))))
        input-layer
        inputs
     )

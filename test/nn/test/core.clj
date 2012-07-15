@@ -5,6 +5,7 @@
   (:require [nn.core :as nn]
             [nn.config.config :as config]
             [nn.neuralnet :as neuralnet]
+            [clj-time.format :as cformat]
             [clojure.pprint :as pprint]
   )
 )
@@ -36,21 +37,33 @@
 )
 
 
-(fact "test the linear combiner function"
+(fact "test the linear combiner function; I expect to see these output values
+        
+        :time 1335902400676 * 0.90 => 1202312160608.4; 1335902400676  is the long value of #<DateTime 2012-05-01T20:00:00.676Z>
+        :bid 1.32379 * 0.68 => 0.9001772
+        :ask 1.32390 * 0.64 => 0.847296
+        :bvolume 2250000.00 * 0.48 => 1080000
+        :avolume 3000000.00 * 0.58 => 1740000
 
-      (let [neuron
-            {:time 1335902400676   ; long value of #<DateTime 2012-05-01T20:00:00.676Z>,
-             :bid "1.32379",
-             :ask "1.32390",
-             :bvolumne "2250000.00",
-             :avolume "3000000.00",
-             :threshold 0.76,
-             :weights {:time 0.90,
-                       :bid 0.68,
-                       :ask 0.64,
-                       :bvolume 0.48,
-                       :avolume 0.58}}
-            ])
+        FINAL => 1202314980610.1474732 (1'202'314'980'610.1474732)"
+
+      (let [neuron {:time (cformat/parse (neuralnet/get-time-format) "01.05.2012 20:00:00.676")
+                    :bid 1.32379,
+                    :ask 1.32390,
+                    :bvolume 2250000.00,
+                    :avolume 3000000.00,
+                    :threshold 0.76,
+                    :weights {:time 0.90,
+                              :bid 0.68,
+                              :ask 0.64,
+                              :bvolume 0.48,
+                              :avolume 0.58}}
+            result (neuralnet/linear-combiner neuron)
+            ]
+
+          ;result => 1202314980610.1474732
+          result => 1.2023149806101477E12
+        )
 )
 
 ; create hidden layer
