@@ -5,58 +5,15 @@
             [incanter.core :as incanter])
 )
 
-(defn linear-combiner
-  [neuron]
 
-  (println (str "linear-combiner function CALLED > " neuron))
-
-  (+ (* (-> neuron :weights :time) (ccoerce/to-long (:time neuron)))
-     (* (-> neuron :weights :bid) (:bid neuron))
-     (* (-> neuron :weights :ask) (:ask neuron))
-     (* (-> neuron :weights :bvolume) (:bvolume neuron))
-     (* (-> neuron :weights :avolume) (:avolume neuron))
-     )
-  
-)
-
-
-(defn activation
-  "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
-  [neuron]
-
-  (println "activation function CALLED")
-
-  (let [combined (linear-combiner neuron)]
-
-    (/ 1 (+ 1 (incanter/exp (* -1 combined))))
-  )
-)
-
-
+;; INPUT LAYER
 (defn get-time-format []
   (cformat/formatter "dd.MM.yyy HH:mm:ss.SSS")
-)
-
-(defn create-hidden-neuron [time ask bid avolume bvolume]
-
-  {:time time
-   :bid bid
-   :ask ask
-   :bvolumne bvolume
-   :avolume avolume
-
-   :threshold (rand)
-   :weights {:time (rand)
-             :bid (rand)
-             :ask (rand)
-             :bvolume (rand)
-             :avolume (rand)
-            }
-  }
 )
 (defn create-input-neuron [key value]
 
   {key value
+
    :weight (rand)
    :bias 0
   }
@@ -78,3 +35,39 @@
   )
 )
 
+
+;; HIDDEN LAYER
+(defn create-hidden-neuron [time ask bid avolume bvolume]
+
+  {:value 0
+   
+   :weight (rand)
+   :bias 0
+  }
+)
+
+(defn linear-combiner
+  [neuron]
+
+  (println (str "linear-combiner function CALLED > " neuron))
+
+  (+ (* (-> neuron :weights :time) (ccoerce/to-long (:time neuron)))
+     (* (-> neuron :weights :bid) (:bid neuron))
+     (* (-> neuron :weights :ask) (:ask neuron))
+     (* (-> neuron :weights :bvolume) (:bvolume neuron))
+     (* (-> neuron :weights :avolume) (:avolume neuron))
+     )
+  
+)
+
+(defn activation
+  "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
+  [neuron]
+
+  (println "activation function CALLED")
+
+  (let [combined (linear-combiner neuron)]
+
+    (/ 1 (+ 1 (incanter/exp (* -1 combined))))
+  )
+)
