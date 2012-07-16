@@ -37,15 +37,24 @@
 
 
 ;; HIDDEN LAYER
-(defn create-hidden-neuron [time ask bid avolume bvolume]
+(defn create-hidden-neuron []
 
   {:value 0
+   :inputs '()
    
    :weight (rand)
    :bias 0
   }
 )
+(defn create-hidden-layer []
+  (let [hidden-layer '()]
 
+    (-> hidden-layer
+        (conj (create-hidden-neuron))
+        (conj (create-hidden-neuron))
+    )
+  )
+)
 (defn linear-combiner
   [neuron]
 

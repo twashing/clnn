@@ -82,6 +82,11 @@
   (neuralnet/activation neuron) => 1.0
 )
 
-; create hidden layer
+(fact "create hidden layer"
+  (let [hidden-layer (neuralnet/create-hidden-layer)]
+    (pprint/pprint hidden-layer)
+    1 => 1
+  )
+)
 
 ; create output layer
