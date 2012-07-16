@@ -1,7 +1,8 @@
 (ns nn.neuralnet
   (:require [clj-time.core :as ctime]
             [clj-time.format :as cformat]
-            [clj-time.coerce :as ccoerce])
+            [clj-time.coerce :as ccoerce]
+            [incanter.core :as incanter])
 )
 
 (defn linear-combiner
@@ -27,7 +28,7 @@
 
   (let [combined (linear-combiner neuron)]
 
-    
+    (/ 1 (+ 1 (incanter/exp (* -1 combined))))
   )
 )
 
@@ -36,7 +37,7 @@
   (cformat/formatter "dd.MM.yyy HH:mm:ss.SSS")
 )
 
-(defn create-input-neuron [time ask bid avolume bvolume]
+(defn create-hidden-neuron [time ask bid avolume bvolume]
 
   {:time time
    :bid bid
@@ -53,25 +54,27 @@
             }
   }
 )
+(defn create-input-neuron [key value]
+
+  {key value
+   :weight (rand)
+   :bias 0
+  }
+)
 (defn create-input-layer
-  "Creating a neuraon for each input value"
+  "Creating a neuron for each input value"
   [inputs]
 
   (let [input-layer '()
         tformat (get-time-format)
        ]
-    (reduce 
-       (fn [result next]
-         (conj result (create-input-neuron
-                            (cformat/parse tformat (first inputs))
-                            (Double/parseDouble (second inputs))
-                            (Double/parseDouble (nth inputs 2))
-                            (Double/parseDouble (nth inputs 3))
-                            (Double/parseDouble (nth inputs 4)))))
-       input-layer
-       inputs
+    (-> input-layer
+        (conj (create-input-neuron :time (cformat/parse tformat (first inputs))))
+        (conj (create-input-neuron :bid (Double/parseDouble (second inputs))))
+        (conj (create-input-neuron :ask (Double/parseDouble (nth inputs 2))))
+        (conj (create-input-neuron :bvolume (Double/parseDouble (nth inputs 3))))
+        (conj (create-input-neuron :avolume (Double/parseDouble (nth inputs 4))))
     )
   )
 )
-
 
