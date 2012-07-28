@@ -15,8 +15,6 @@
   {:key key
    :value value
 
-   :weight (rand)
-   :bias 0
   }
 )
 (defn create-input-layer
@@ -43,11 +41,11 @@
   {:value 0
    :inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) }) '() input-layer)
    
-   :weight (rand)
    :bias 0
   }
 )
-(defn create-hidden-layer [input-layer];
+
+(defn create-hidden-layer [input-layer]
   (let [hidden-layer '()]
 
     (-> hidden-layer
@@ -56,26 +54,28 @@
     )
   )
 )
+
 (defn linear-combiner
   [neuron]
-
+  
   (println (str "linear-combiner function CALLED > " neuron))
 
-  (+ (* (-> neuron :weights :time) (ccoerce/to-long (:time neuron)))
-     (* (-> neuron :weights :bid) (:bid neuron))
-     (* (-> neuron :weights :ask) (:ask neuron))
-     (* (-> neuron :weights :bvolume) (:bvolume neuron))
-     (* (-> neuron :weights :avolume) (:avolume neuron))
-     )
+  ;; if a number, just multiply and add to the result; otherwise, convert data to long
+  (reduce #(+ %1 (* (if(number? (:value %2)) (:value %2) (ccoerce/to-long (:value neuron)))
+                    (:weight %2))
+          )
+          0
+          (:inputs neuron)
+  )
   
 )
 
 (defn activation
   "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
   [neuron]
-
-  (println "activation function CALLED")
-
+  
+  ;;(println "activation function CALLED")
+  
   (let [combined (linear-combiner neuron)]
 
     (/ 1 (+ 1 (incanter/exp (* -1 combined))))
