@@ -12,7 +12,8 @@
 )
 (defn create-input-neuron [key value]
 
-  {key value
+  {:key key
+   :value value
 
    :weight (rand)
    :bias 0
@@ -37,21 +38,21 @@
 
 
 ;; HIDDEN LAYER
-(defn create-hidden-neuron []
+(defn create-hidden-neuron [input-layer]
 
   {:value 0
-   :inputs '()
+   :inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) }) '() input-layer)
    
    :weight (rand)
    :bias 0
   }
 )
-(defn create-hidden-layer []
+(defn create-hidden-layer [input-layer];
   (let [hidden-layer '()]
 
     (-> hidden-layer
-        (conj (create-hidden-neuron))
-        (conj (create-hidden-neuron))
+        (conj (create-hidden-neuron input-layer))
+        (conj (create-hidden-neuron input-layer))
     )
   )
 )

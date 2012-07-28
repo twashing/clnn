@@ -83,7 +83,10 @@
 )
 
 (fact "create hidden layer"
-  (let [hidden-layer (neuralnet/create-hidden-layer)]
+      (let [train-data (config/load-config)
+            input-layer (neuralnet/create-input-layer (second train-data))
+            hidden-layer (neuralnet/create-hidden-layer input-layer)]
+    (println "Showing Hidden Layer")
     (pprint/pprint hidden-layer)
     1 => 1
   )
