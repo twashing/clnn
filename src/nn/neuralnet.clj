@@ -58,7 +58,7 @@
 (defn linear-combiner
   [neuron]
   
-  (println (str "linear-combiner function CALLED > " neuron))
+  (println (str "linear-combiner function CALLED > " (-> neuron :inputs first :value ccoerce/to-long\) ))
 
   ;; if a number, just multiply and add to the result; otherwise, convert data to long
   (reduce #(+ %1 (* (if(number? (:value %2)) (:value %2) (ccoerce/to-long (:value neuron)))
@@ -72,12 +72,9 @@
 
 (defn activation
   "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
-  [neuron]
+  [value]
   
   ;;(println "activation function CALLED")
+  (/ 1 (+ 1 (incanter/exp (* -1 value))))
   
-  (let [combined (linear-combiner neuron)]
-
-    (/ 1 (+ 1 (incanter/exp (* -1 combined))))
-  )
 )

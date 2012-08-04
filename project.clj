@@ -4,7 +4,10 @@
                  [swank-clojure "1.4.2"]
                  [clojure-csv/clojure-csv "2.0.0-alpha1"]
                  [clj-time "0.4.3"]
-                 [incanter "1.3.0"]]
+                 [incanter "1.3.0"]
+
+                 [org.encog/encog-core "3.1.0"]   ; official encog 3.1 release
+                 [clojure-encog "0.4.0-SNAPSHOT"]] ; my code
   :plugins [[lein-swank "1.4.4"]]
   :dev-dependencies [[midje "1.4.0"]
                      [lein-midje "1.0.10"]

@@ -111,6 +111,7 @@
     (let [value (+ (neuralnet/linear-combiner (first hidden-layer))
                    (:bias (first hidden-layer)))]
       (println (str "Hidden Neuron value: " value))
+      (println (str "Hidden Neuron activation-value: " (neuralnet/activation value)))
     )
     1 => 1
   )
