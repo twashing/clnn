@@ -1,5 +1,5 @@
 (defproject nn "1.0.0-SNAPSHOT"
-  :description "FIXME: write description"
+  :description "This is me dablling in Neural Networks; Trying to build a predicotr for financial time series"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [swank-clojure "1.4.2"]
                  [clojure-csv/clojure-csv "2.0.0-alpha1"]
@@ -14,4 +14,6 @@
                      [com.stuartsierra/lazytest "1.2.3"]
                      ]
   :repositories {"stuart" "http://stuartsierra.com/maven2"}
+
+  :resources-path ".:src/:test/:etc/:etc/data/"
 )
