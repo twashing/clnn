@@ -4,8 +4,7 @@
             [clj-time.coerce :as ccoerce]
             [incanter.core :as incanter]
             [clojure.pprint :as pprint]
-            [nn.util :as util]
-            )
+            [nn.util :as util])
 )
 
 
@@ -45,15 +44,14 @@
 
 ;; HIDDEN LAYER
 (defn create-hidden-neuron [input-layer]
-
-  {:inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) }) '() input-layer)
-   :bias 0
+  
+  {:inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) :bias 0 }) '() input-layer)
    :id (util/generate-id)
   }
 )
 (defn create-hidden-layer [input-layer]
   (let [hidden-layer '()]
-
+    
     (-> hidden-layer
         (conj (create-hidden-neuron input-layer))
         (conj (create-hidden-neuron input-layer))
@@ -75,32 +73,40 @@
   [neuron]
   
   ;;(println (str "linear-combiner function CALLED > " (-> neuron :inputs)))
-  (reduce #(+ %1 (* (:value %2)
-                    (:weight %2)))
+  (reduce (fn [rlt ech]
+            (+ rlt (+ (* (:value ech)
+                         (:weight ech))
+                      (:bias ech))) )
           0
           (:inputs neuron)
-  ) 
+  )
 )
+
 (defn activation
   "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
   [value]
   
   (/ 1 (+ 1 (incanter/exp (* -1 value))))
 )
+
 (defn apply-combiner-activation [hidden-layer]
   (map (fn [ech]
-         (let [combined (+ (linear-combiner ech) (:bias ech))
+         (let [combined (linear-combiner ech)
                pass1 (assoc ech :value-combined combined)
-               pass2 (assoc pass1 :value-activation (activation combined))]
+               pass2 (assoc pass1 :value-activation (activation combined))
+              ]
            pass2
-       ))
+         )
+       )
        hidden-layer
   )
 )
 
+
 ;; OUTPUT LAYER
 (defn create-output-neuron [hidden-layer]
   {:inputs (reduce #(conj %1 { :value (:value-activation %2) :hidden-neuron-id (:id %2) :weight (rand) }) '() hidden-layer)
+   :bias 0
   }
 )
 (defn create-output-layer [hidden-layer]
@@ -112,6 +118,7 @@
     )
   )
 )
+
 
 ;; --- testing 
 (require '[nn.config.config :as config])
@@ -126,24 +133,12 @@
     
     (pprint/pprint "Hidden Layer:")
     (pprint/pprint hidden-layer)
-    ;(map #(neuralnet/linear-combiner %1) hidden-layer)
     
     ;; apply linear combiner and add the bias to get a value
-    (let [hidden-updated (map (fn [ech]
-                                (let [combined (+ (linear-combiner ech) (:bias ech))
-                                      pass1 (assoc ech :value-combined combined)
-                                      pass2 (assoc pass1 :value-activation (activation combined))]
-                                  pass2
-                                ))
-                              
-                              hidden-layer
-                         )
-         ]
+    (let [hidden-updated (apply-combiner-activation hidden-layer)]
+      
       (println "Hidden Layer , Combined and Activated:")
       (pprint/pprint hidden-updated)
-    )
-    (comment let [hidden-updated (map println hidden-layer)]
-      
     )
   )
 )
@@ -160,4 +155,3 @@
     (pprint/pprint output-layer)
   )
 )
-
