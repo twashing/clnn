@@ -5,7 +5,7 @@
             )
 )
 
-(defn load-config []
+(defn load-train-data []
   
   (let [config (load-file "etc/config.clj")
         dname (-> config :data :test)

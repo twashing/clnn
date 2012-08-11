@@ -13,12 +13,12 @@
 
 
 (fact "load config training file; ensure first tickis as expected"
-  (-> (config/load-config) nil? not) => true
+  (-> (config/load-train-data) nil? not) => true
 )
 
 
 (fact "we can get the next tick"
-  (let [train-data (config/load-config)
+  (let [train-data (config/load-train-data)
         next-tick (nn/next-tick train-data)]
     (-> next-tick nil? not) => true
     
@@ -27,7 +27,7 @@
 
 
 (fact "create input layer"
-  (let [train-data (config/load-config)
+  (let [train-data (config/load-train-data)
         input-layer (neuralnet/create-input-layer (second train-data))
        ]
     ;;(pprint/pprint input-layer)
@@ -57,7 +57,7 @@
 )
 
 (fact "create hidden layer"
-  (let [train-data (config/load-config)
+  (let [train-data (config/load-train-data)
         input-layer (neuralnet/create-input-layer (second train-data))
         hidden-layer (neuralnet/create-hidden-layer input-layer)]
     (println "Showing Hidden Layer")
@@ -100,7 +100,7 @@
 
         FINAL => 1202314980610.1474732 (1'202'314'980'610.1474732)"
   
-  (let [train-data (config/load-config)
+  (let [train-data (config/load-train-data)
         input-layer (neuralnet/create-input-layer (second train-data))
         hidden-layer (neuralnet/create-hidden-layer input-layer)]
     

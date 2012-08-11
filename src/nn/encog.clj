@@ -1,5 +1,14 @@
 (ns nn.encog
-  (:require [clojure-encog.nnets :as enets])
+  (:require [clojure-encog.nnets :as enets]
+            ;;[clojure-encog.normalization :as enormalization]
+            [clojure-encog.training :as etraining]
+            [nn.config.config :as config])
+)
+
+
+;; 0. massage the data
+#_(let [train-data (config/load-train-data)]
+  (enormalization/prepare :array-range nil nil :raw-seq train-data :ceiling 0.9 :floor 0.1)
 )
 
 ;; 1. create a neural network 

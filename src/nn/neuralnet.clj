@@ -17,6 +17,9 @@
 
   }
 )
+(defn normalize-data [data-double multiplier]
+  (/ data-double multiplier)
+)
 (defn create-input-layer
   "Creating a neuron for each input value"
   [inputs]
@@ -58,10 +61,13 @@
 (defn linear-combiner
   [neuron]
   
-  (println (str "linear-combiner function CALLED > " (-> neuron :inputs first :value ccoerce/to-long\) ))
+  (println (str "linear-combiner function CALLED > " (-> neuron :inputs first :value ccoerce/to-long) ))
 
   ;; if a number, just multiply and add to the result; otherwise, convert data to long
-  (reduce #(+ %1 (* (if(number? (:value %2)) (:value %2) (ccoerce/to-long (:value neuron)))
+  (reduce #(+ %1 (* (if(number? (:value %2))
+                       (:value %2)
+                       (ccoerce/to-long (:value %2))
+                    )
                     (:weight %2))
           )
           0
