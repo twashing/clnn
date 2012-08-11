@@ -105,8 +105,7 @@
 
 ;; OUTPUT LAYER
 (defn create-output-neuron [hidden-layer]
-  {:inputs (reduce #(conj %1 { :value (:value-activation %2) :hidden-neuron-id (:id %2) :weight (rand) }) '() hidden-layer)
-   :bias 0
+  {:inputs (reduce #(conj %1 { :value (:value-activation %2) :hidden-neuron-id (:id %2) :weight (rand) :bias 0 } ) '() hidden-layer)
   }
 )
 (defn create-output-layer [hidden-layer]
