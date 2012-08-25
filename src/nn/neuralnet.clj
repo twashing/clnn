@@ -4,119 +4,12 @@
             [clj-time.coerce :as ccoerce]
             [incanter.core :as incanter]
             [clojure.pprint :as pprint]
+            [nn.layers.input :as ilayer]
+            [nn.layers.hidden :as hlayer]
+            [nn.layers.output :as olayer]
             [nn.util :as util])
 )
 
-
-;; NORMALIZE INPUT DATA
-(defn normalize-data [multiplier data-double]
-  (/ data-double multiplier)
-)
-
-
-;; INPUT LAYER
-(defn get-time-format []
-  (cformat/formatter "dd.MM.yyy HH:mm:ss.SSS")
-)
-(defn create-input-neuron [key value]
-  {:key key
-   :value value
-  }
-)
-
-(defn create-input-layer
-  "Creating a neuron for each input value"
-  [inputs]
-
-  (let [input-layer '()
-        tformat (get-time-format)
-       ]
-    (-> input-layer
-        (conj (create-input-neuron :time (->> (first inputs) (cformat/parse tformat) ccoerce/to-long double (normalize-data 1000000000000) )))
-        (conj (create-input-neuron :bid (-> (second inputs) Double/parseDouble )))
-        (conj (create-input-neuron :ask (-> (nth inputs 2) Double/parseDouble )))
-        (conj (create-input-neuron :bvolume (->> (nth inputs 3) Double/parseDouble (normalize-data 1000000) )))
-        (conj (create-input-neuron :avolume (->> (nth inputs 4) Double/parseDouble (normalize-data 1000000) )))
-    )
-  )
-)
-
-
-;; HIDDEN LAYER
-(defn create-hidden-neuron [input-layer]
-  
-  {:inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) :bias 0 }) '() input-layer)
-   :id (util/generate-id)
-  }
-)
-(defn create-hidden-layer [input-layer]
-  (let [hidden-layer '()]
-    
-    (-> hidden-layer
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-        (conj (create-hidden-neuron input-layer))
-    )
-  )
-)
-
-
-;; Linear Combiner & Activation FUNCTIONS
-(defn linear-combiner
-  [neuron]
-  
-  ;;(println (str "linear-combiner function CALLED > " (-> neuron :inputs)))
-  (reduce (fn [rlt ech]
-            (+ rlt (+ (* (:value ech)
-                         (:weight ech))
-                      (:bias ech))) )
-          0
-          (:inputs neuron)
-  )
-)
-
-(defn activation
-  "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
-  [value]
-  
-  (/ 1 (+ 1 (incanter/exp (* -1 value))))
-)
-
-(defn apply-combiner-activation [hidden-layer]
-  (map (fn [ech]
-         (let [combined (linear-combiner ech)
-               pass1 (assoc ech :value-combined combined)
-               pass2 (assoc pass1 :value-activation (activation combined))
-              ]
-           pass2
-         )
-       )
-       hidden-layer
-  )
-)
-
-
-;; OUTPUT LAYER
-(defn create-output-neuron [hidden-layer]
-  {:inputs (reduce #(conj %1 { :value (:value-activation %2) :hidden-neuron-id (:id %2) :weight (rand) :bias 0 } ) '() hidden-layer)
-  }
-)
-(defn create-output-layer [hidden-layer]
-  (let [output-layer '()]
-
-    (-> output-layer
-        (conj (create-output-neuron hidden-layer))
-        (conj (create-output-neuron hidden-layer))
-    )
-  )
-)
 
 
 ;; --- testing 
@@ -124,8 +17,8 @@
 (defn test-hidden-layer[]
 
   (let [train-data (config/load-train-data)
-        input-layer (create-input-layer (second train-data))
-        hidden-layer (create-hidden-layer input-layer)]
+        input-layer (ilayer/create-input-layer (second train-data))
+        hidden-layer (hlayer/create-hidden-layer input-layer)]
     
     (pprint/pprint "Input Layer:")
     (pprint/pprint input-layer)
@@ -134,7 +27,7 @@
     (pprint/pprint hidden-layer)
     
     ;; apply linear combiner and add the bias to get a value
-    (let [hidden-updated (apply-combiner-activation hidden-layer)]
+    (let [hidden-updated (hlayer/apply-combiner-activation hidden-layer)]
       
       (println "Hidden Layer , Combined and Activated:")
       (pprint/pprint hidden-updated)
@@ -145,12 +38,64 @@
 (defn test-output-layer[]
 
   (let [train-data (config/load-train-data)
-        input-layer (create-input-layer (second train-data))
-        hidden-layer (create-hidden-layer input-layer)
-        hidden-updated (apply-combiner-activation hidden-layer)
-        output-layer (create-output-layer hidden-updated)
+        input-layer (ilayer/create-input-layer (second train-data))
+        hidden-layer (hlayer/create-hidden-layer input-layer)
+        hidden-updated (hlayer/apply-combiner-activation hidden-layer)
+        output-layer (olayer/create-output-layer hidden-updated)
        ]
     (pprint/pprint "Output Layer:")
     (pprint/pprint output-layer)
   )
 )
+
+
+(defn propogation-resilient [neural-network next-tick]
+  
+   
+)
+
+(defn create-neural-network[single-tick-data]
+  
+  (let [input-layer (ilayer/create-input-layer single-tick-data)
+        hidden-layer (hlayer/create-hidden-layer input-layer)
+        hidden-updated (hlayer/apply-combiner-activation hidden-layer)
+        output-layer (olayer/create-output-layer hidden-updated)
+       ]
+    
+    {:input-layer input-layer
+     :hidden-layer hidden-updated
+     :output-layer output-layer
+    }
+  )
+)
+
+(defn thing []
+  
+  (let [train-data (config/load-train-data)
+        ;;first-tick (second train-data)
+        ;;neural-network (create-neural-network first-tick)
+        
+        ;;iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }) ;; record tick & neuraln result
+        ;;next-tick (nth train-data 2)
+       ]
+    
+    
+    ;; run 1 iteration... see results
+    ;;(def nn (propogation-resilient neural-network next-tick))
+    ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
+    
+    ;; train until an acceptable margin of error
+    
+  )
+)
+
+
+;; by default this i) takes the train data and 2) combiner and activation functions on hidden layer
+
+;; function > predict bid (1 iteration based on a single piece of tick data)
+
+;; structure > to store previous tick data values
+
+;; predict bid & ask
+
+
