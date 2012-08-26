@@ -58,12 +58,12 @@
   
   (let [input-layer (ilayer/create-input-layer single-tick-data)
         hidden-layer (hlayer/create-hidden-layer input-layer)
-        hidden-updated (hlayer/apply-combiner-activation hidden-layer)
-        output-layer (olayer/create-output-layer hidden-updated)
+        ;;hidden-updated (hlayer/apply-combiner-activation hidden-layer)
+        output-layer (olayer/create-output-layer hidden-layer)
        ]
     
     {:input-layer input-layer
-     :hidden-layer hidden-updated
+     :hidden-layer hidden-layer
      :output-layer output-layer
     }
   )
@@ -72,17 +72,17 @@
 (defn thing []
   
   (let [train-data (config/load-train-data)
-        ;;first-tick (second train-data)
-        ;;neural-network (create-neural-network first-tick)
+        first-tick (second train-data)
+        neural-network (create-neural-network first-tick)
         
-        ;;iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }) ;; record tick & neuraln result
-        ;;next-tick (nth train-data 2)
+        iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }) ;; record tick & neuraln result
+        next-tick (nth train-data 2)
        ]
     
     
     ;; run 1 iteration... see results
-    ;;(def nn (propogation-resilient neural-network next-tick))
-    ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
+    (def nn (propogation-resilient neural-network next-tick))
+    (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
     
     ;; train until an acceptable margin of error
     

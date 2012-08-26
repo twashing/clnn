@@ -19,12 +19,13 @@
 (defn create-input-neuron [key value]
   {:key key
    :value value
+   :weight (rand)
   }
 )
 
 (defn create-input-layer
   "Creating a neuron for each input value"
-  [inputs]
+;e  [inputs]
 
   (let [input-layer '()
         tformat (get-time-format)

@@ -1,7 +1,7 @@
 (defproject nn "1.0.0-SNAPSHOT"
   :description "This is me dablling in Neural Networks; Trying to build a predicotr for financial time series-"
   :dependencies [[org.clojure/clojure "1.3.0"]
-                 [swank-clojure "1.4.2"]
+                 [swank-clojure "1.5.0-SNAPSHOT"]
                  [clojure-csv/clojure-csv "2.0.0-alpha1"]
                  [clj-time "0.4.3"]
                  [incanter "1.3.0"]
