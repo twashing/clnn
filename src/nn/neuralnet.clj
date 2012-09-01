@@ -7,13 +7,14 @@
             [nn.layers.input :as ilayer]
             [nn.layers.hidden :as hlayer]
             [nn.layers.output :as olayer]
-            [nn.util :as util])
+            [nn.config.config :as config]
+            [nn.util :as util]
+  )
 )
 
 
 
 ;; --- testing 
-(require '[nn.config.config :as config])
 (defn test-hidden-layer[]
 
   (let [train-data (config/load-train-data)
@@ -49,16 +50,51 @@
 )
 
 
-(defn propogation-resilient [neural-network next-tick]
+;; --- propogation
+
+(defn trigger-neurons [neural-network]
+
+  ;; set value (for bid)
+
+  ;; trigger activation
+)
+(defn calculate-total-error []
+
+  ;; ... 
+)
+(defn propogate-error []
+
+  ;; ... 
+)
+(defn update-weights []
+
+  ;; ...
   
-   
 )
 
-(defn create-neural-network[single-tick-data]
+
+;; referencing this page: http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html
+(defn propogation-resilient [neural-network next-tick]
+
+  ;; propagate price signal (start with bid) through the network
+  ;; in output neurons, calculate error between output (start with bid) and actual bid
+  ;; apply total error to weight in each neuron -> going backwards through neuralnet 
+  ;; apply weight change using ... partial derivative of the weighted error... -> going forwards through the neuralnet
+)
+
+(defn create-neural-network [single-tick-data]
   
-  (let [input-layer (ilayer/create-input-layer single-tick-data)
+  (let [
+        inputs '(
+          { :key :time :value (->> (first single-tick-data) (cformat/parse tformat) ccoerce/to-long double (normalize-data 1000000000000) ) }
+          { :key :bid :value (-> (second single-tick-data) Double/parseDouble ) }
+          { :key :ask :value (-> (nth single-tick-data 2) Double/parseDouble ) }
+          { :key :bvolume :value (->> (nth single-tick-data 3) Double/parseDouble (normalize-data 1000000) ) }
+          { :key :avolume :value (->> (nth single-tick-data 4) Double/parseDouble (normalize-data 1000000) ) }
+        )
+        input-layer (ilayer/create-input-layer inputs)
         hidden-layer (hlayer/create-hidden-layer input-layer)
-        ;;hidden-updated (hlayer/apply-combiner-activation hidden-layer)
+        
         output-layer (olayer/create-output-layer hidden-layer)
        ]
     
@@ -83,7 +119,8 @@
     ;; run 1 iteration... see results
     (def nn (propogation-resilient neural-network next-tick))
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
-    
+
+    (pprint/pprint nn)
     ;; train until an acceptable margin of error
     
   )
