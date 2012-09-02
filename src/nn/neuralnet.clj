@@ -85,14 +85,7 @@
 (defn create-neural-network [single-tick-data]
   
   (let [
-        inputs '(
-          { :key :time :value (->> (first single-tick-data) (cformat/parse tformat) ccoerce/to-long double (normalize-data 1000000000000) ) }
-          { :key :bid :value (-> (second single-tick-data) Double/parseDouble ) }
-          { :key :ask :value (-> (nth single-tick-data 2) Double/parseDouble ) }
-          { :key :bvolume :value (->> (nth single-tick-data 3) Double/parseDouble (normalize-data 1000000) ) }
-          { :key :avolume :value (->> (nth single-tick-data 4) Double/parseDouble (normalize-data 1000000) ) }
-        )
-        input-layer (ilayer/create-input-layer inputs)
+        input-layer (ilayer/create-input-layer single-tick-data)
         hidden-layer (hlayer/create-hidden-layer input-layer)
         
         output-layer (olayer/create-output-layer hidden-layer)

@@ -34,20 +34,20 @@
 
   (let [input-layer '()
         tformat (get-time-format)
-        input-list '(
+        input-list [
           { :key :time :value (->> (first inputs) (cformat/parse tformat) ccoerce/to-long double (normalize-data 1000000000000) ) }
           { :key :bid :value (-> (second inputs) Double/parseDouble ) }
           { :key :ask :value (-> (nth inputs 2) Double/parseDouble ) }
           { :key :bvolume :value (->> (nth inputs 3) Double/parseDouble (normalize-data 1000000) ) }
           { :key :avolume :value (->> (nth inputs 4) Double/parseDouble (normalize-data 1000000) ) }
-        )
+        ]
        ]
     (-> input-layer
-        (conj (create-input-neuron  input-list ))
-        (conj (create-input-neuron  input-list ))
-        (conj (create-input-neuron  input-list ))
-        (conj (create-input-neuron  input-list ))
-        (conj (create-input-neuron  input-list ))
+        (conj (create-input-neuron input-list ))
+        (conj (create-input-neuron input-list ))
+        (conj (create-input-neuron input-list ))
+        (conj (create-input-neuron input-list ))
+        (conj (create-input-neuron input-list ))
     )
   )
 )
