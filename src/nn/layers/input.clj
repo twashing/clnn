@@ -43,11 +43,11 @@
         )
        ]
     (-> input-layer
-        (conj (create-input-neuron :time input-list ))
-        (conj (create-input-neuron :bid input-list ))
-        (conj (create-input-neuron :ask input-list ))
-        (conj (create-input-neuron :bvolume input-list ))
-        (conj (create-input-neuron :avolume input-list ))
+        (conj (create-input-neuron  input-list ))
+        (conj (create-input-neuron  input-list ))
+        (conj (create-input-neuron  input-list ))
+        (conj (create-input-neuron  input-list ))
+        (conj (create-input-neuron  input-list ))
     )
   )
 )

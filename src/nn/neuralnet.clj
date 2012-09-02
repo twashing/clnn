@@ -115,12 +115,13 @@
         next-tick (nth train-data 2)
        ]
     
+    (pprint/pprint neural-network)
     
     ;; run 1 iteration... see results
     (def nn (propogation-resilient neural-network next-tick))
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
-
-    (pprint/pprint nn)
+    
+    
     ;; train until an acceptable margin of error
     
   )
