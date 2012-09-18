@@ -1,14 +1,18 @@
 (ns nn.layers.hidden
 
   (:require [incanter.core :as incanter]
-            [nn.util :as util]
-            )
+            [nn.util :as util])
 )
 
 ;; HIDDEN LAYER
 (defn create-hidden-neuron [input-layer]
   
-  {:inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) :bias 0 }) '() input-layer)
+  {:inputs (reduce  #(conj  %1 
+                            { :input-id (:id %2) 
+                              :weight (rand) 
+                              :bias 0 }) 
+                    '() 
+                    input-layer)
    :id (util/generate-id)
   }
 )

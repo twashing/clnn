@@ -75,11 +75,16 @@
 
 ;; referencing this page: http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html
 (defn propogation-resilient [neural-network next-tick]
-
+  
   ;; propagate price signal (start with bid) through the network
+  
+  
   ;; in output neurons, calculate error between output (start with bid) and actual bid
+  
   ;; apply total error to weight in each neuron -> going backwards through neuralnet 
+  
   ;; apply weight change using ... partial derivative of the weighted error... -> going forwards through the neuralnet
+  
 )
 
 (defn create-neural-network [single-tick-data]
