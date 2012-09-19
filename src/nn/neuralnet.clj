@@ -5,6 +5,7 @@
             [incanter.core :as incanter]
             [clojure.pprint :as pprint]
             [clojure.walk :as walk]
+            [clojure.zip :as zip]
             [nn.layers.input :as ilayer]
             [nn.layers.hidden :as hlayer]
             [nn.layers.output :as olayer]
@@ -73,67 +74,83 @@
   
 )
 
+                          #_(%1 :inputs) 
+                          #_(fn [_ c] c)
+                          #_(assoc %1 :inputs (into [] %2)) 
 
+                      #_(let  [ val (:value loc)
+                              wei (:weight loc)
+                              calculated (* val wei) ]
+                            (println "zipping:" (conj loc { :calculated calculated })) 
+                            { :calculated calculated }
+                      )
+                          
+                          #_(or (map? %) (list? %) (vector? %))
+                          #_((if (map? %1)
+                              (:inputs %1)
+                              (list %1)))
+                          
 ;; referencing this page: http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html
 (defn propogation-resilient2 [neural-network next-tick]
   
-  (comment walk/postwalk  (fn [ech] 
-                    (if  (and (map? ech) (:value ech))   ;; check that i. we are dealing with a map and ii. that there's a value
-                        (let  [ val (:value ech)
-                                wei (:weight ech)
-                                calculated (* val wei) ]
-                              (println "visiting:" (conj ech { :calculated calculated })) 
-                              (conj ech { :calculated calculated })
-                        )
-                    )
-                    ech
-                  )
-                  neural-network
-  )
+  (loop [loc (zip/zipper  (fn [node]
+                            (or (map? node)
+                                (list? node)))
+                          (fn [node]
+                            (cond 
+                              (nil? node)   nil
+                              (map? node)   (:inputs node)
+                              :else         node))
+                          (fn [node children]
+                            (cond
+                              (nil? node)   nil
+                              (map? node)   (assoc node :inputs children)
+                              (list? node)  (into '() children)
+                              :else       node))
+                          (:input-layer neural-network))] ;; for '(into [] %2)', putting :content list into a vector
     
-    (loop [loc (zip/zipper  map? 
-                            #(:inputs %1) 
-                            #(assoc %1 :inputs (into '() %2)) 
-                            (:input-layer neural-network))] ;; for '(into [] %2)', putting :content list into a vector
-      
-      (if (zip/end? loc)
-        (zip/root loc)
-        (if (contains? (zip/node loc) :_id) 
-            (recur  (zip/next
-                      (zip/edit loc merge 
-                        (comment { :_id
-                          (.toString (get (zip/node loc) :_id)) ;; gets the org.bson.types.ObjectId, and extract ID String
-                        })
-                        
-                        (let  [ val (:value loc)
-                                wei (:weight loc)
-                                calculated (* val wei) ]
-                              (println "zipping:" (conj loc { :calculated calculated })) 
-                              { :calculated calculated }
-                        )
-                        ))) 
-            (recur (zip/next loc))
-        )   
-      )   
-    )
+    (if (zip/end? loc)
+      (zip/root loc)
+      #_(do
+        (println (str "... " (zip/node loc)))
+        (recur (zip/next loc))
+      )
+      (if (and  (-> loc zip/node map?) 
+                (-> loc zip/node (contains?   :key)))
+        (do
+        (println (str "... " (zip/node loc)))
+        (recur  (zip/next
+                  (zip/edit loc merge
+                    
+                    (let  [ val (:value (zip/node loc))
+                            wei (:weight (zip/node loc))
+                            calculated (* val wei) ]
+                          { :calculated calculated })
+                    
+                  ))) 
+        )
+        (recur (zip/next loc))
+      )
+    ) 
+  )
 )
 
 (defn propogation-resilient [neural-network next-tick]
   
   ;; propagate price signal (start with bid) through the network
   (defn calculate-value-input [input-list]
-    
-    (map  #(let  [ val (:value %1)
+    (println "Arrrggghhhhh !!!")
+    (map  #(let [ val (:value %1)
                   wei (:weight %1)
                   calculated (* val wei) ]
-                ;;(pprint/pprint calculated)
+                (println (str "each... " (conj %1 { :calculated calculated })) )
                 (conj %1 { :calculated calculated })
           )
-          input-list
+          (input-list)
     )
   )
   ;;(def results 
-    (-> neural-network :input-layer :inputs (calculate-value-input))
+    (-> neural-network :input-layer (calculate-value-input))
   ;;)
 
   ;;(pprint/pprint results)
