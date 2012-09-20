@@ -15,7 +15,6 @@
 )
 
 
-
 ;; --- testing 
 (defn test-hidden-layer[]
 
@@ -55,104 +54,31 @@
 ;; --- propogation
 
 (defn trigger-neurons [neural-network]
-
+  
   ;; set value (for bid)
-
+  
   ;; trigger activation
 )
 (defn calculate-total-error []
-
+  
   ;; ... 
 )
 (defn propogate-error []
-
+  
   ;; ... 
 )
 (defn update-weights []
-
+  
   ;; ...
   
 )
 
-                          #_(%1 :inputs) 
-                          #_(fn [_ c] c)
-                          #_(assoc %1 :inputs (into [] %2)) 
-
-                      #_(let  [ val (:value loc)
-                              wei (:weight loc)
-                              calculated (* val wei) ]
-                            (println "zipping:" (conj loc { :calculated calculated })) 
-                            { :calculated calculated }
-                      )
-                          
-                          #_(or (map? %) (list? %) (vector? %))
-                          #_((if (map? %1)
-                              (:inputs %1)
-                              (list %1)))
-                          
 ;; referencing this page: http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html
-(defn propogation-resilient2 [neural-network next-tick]
-  
-  (loop [loc (zip/zipper  (fn [node]
-                            (or (map? node)
-                                (list? node)))
-                          (fn [node]
-                            (cond 
-                              (nil? node)   nil
-                              (map? node)   (:inputs node)
-                              :else         node))
-                          (fn [node children]
-                            (cond
-                              (nil? node)   nil
-                              (map? node)   (assoc node :inputs children)
-                              (list? node)  (into '() children)
-                              :else       node))
-                          (:input-layer neural-network))] ;; for '(into [] %2)', putting :content list into a vector
-    
-    (if (zip/end? loc)
-      (zip/root loc)
-      #_(do
-        (println (str "... " (zip/node loc)))
-        (recur (zip/next loc))
-      )
-      (if (and  (-> loc zip/node map?) 
-                (-> loc zip/node (contains?   :key)))
-        (do
-        (println (str "... " (zip/node loc)))
-        (recur  (zip/next
-                  (zip/edit loc merge
-                    
-                    (let  [ val (:value (zip/node loc))
-                            wei (:weight (zip/node loc))
-                            calculated (* val wei) ]
-                          { :calculated calculated })
-                    
-                  ))) 
-        )
-        (recur (zip/next loc))
-      )
-    ) 
-  )
-)
-
 (defn propogation-resilient [neural-network next-tick]
   
   ;; propagate price signal (start with bid) through the network
-  (defn calculate-value-input [input-list]
-    (println "Arrrggghhhhh !!!")
-    (map  #(let [ val (:value %1)
-                  wei (:weight %1)
-                  calculated (* val wei) ]
-                (println (str "each... " (conj %1 { :calculated calculated })) )
-                (conj %1 { :calculated calculated })
-          )
-          (input-list)
-    )
-  )
-  ;;(def results 
-    (-> neural-network :input-layer (calculate-value-input))
-  ;;)
-
+  (-> neural-network :input-layer (ilayer/calculate-value))
+  
   ;;(pprint/pprint results)
   
   ;; in output neurons, calculate error between output (start with bid) and actual bid
