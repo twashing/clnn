@@ -58,7 +58,6 @@
       (zip/root loc)
       (if (and  (-> loc zip/node map?) 
                 (-> loc zip/node (contains? :input-id)))
-        (do
         (recur  (zip/next
                   (zip/edit loc merge
                     
@@ -69,7 +68,6 @@
                             calculated (* val wei) ]
                           { :calculated calculated })
                   ))) 
-        )
         (recur (zip/next loc))
       )
     ) 

@@ -77,7 +77,6 @@
       (zip/root loc)
       (if (and  (-> loc zip/node map?) 
                 (-> loc zip/node (contains?   :key)))
-        (do
         (recur  (zip/next
                   (zip/edit loc merge
                     
@@ -87,7 +86,6 @@
                           { :calculated calculated })
                     
                   ))) 
-        )
         (recur (zip/next loc))
       )
     ) 

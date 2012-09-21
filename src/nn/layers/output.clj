@@ -21,7 +21,7 @@
 
     (-> output-layer
         (conj (create-output-neuron hidden-layer))
-        (conj (create-output-neuron hidden-layer))
+        ;;(conj (create-output-neuron hidden-layer))
     )
   )
 )
