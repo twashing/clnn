@@ -55,7 +55,7 @@
 
 
 ;; CALCULATE VALUES
-(defn calculate-value [neural-layer]
+(defn calculate-leaf-value [neural-layer]
   
   (loop [loc (zip/zipper  (fn [node]
                             (or (map? node)
@@ -78,7 +78,7 @@
       (if (and  (-> loc zip/node map?) 
                 (-> loc zip/node (contains?   :key)))
         (do
-        (println (str "... " (zip/node loc)))
+        ;;(println (str "... " (zip/node loc)))
         (recur  (zip/next
                   (zip/edit loc merge
                     
@@ -93,6 +93,18 @@
       )
     ) 
   )
+)
+(defn calculate-final-value [ech-map]
+  (merge ech-map  { :calcualted-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
+                                              0 
+                                              (:inputs ech-map))
+                  }
+  )
+)
+(defn calculate-value [neural-layer]
+  
+  ;; first calculate leaf values, then map calculated-values over the result list
+  (map calculate-final-value (calculate-leaf-value neural-layer))
 )
 
 
