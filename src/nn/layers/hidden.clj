@@ -62,7 +62,9 @@
         (recur  (zip/next
                   (zip/edit loc merge
                     
-                    (let  [ val 0 ;; lookup value based on input-id (:value (zip/node loc))
+                    (let  [ val (:calcualted-value (first (filter (fn [ech]
+                                                                    (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
+                                                                  input-layer)))
                             wei (:weight (zip/node loc))
                             calculated (* val wei) ]
                           { :calculated calculated })

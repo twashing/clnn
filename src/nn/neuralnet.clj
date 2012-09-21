@@ -78,10 +78,10 @@
   
   ;; propagate price signal (start with bid) through the network
   (let  [ nni (-> neural-network :input-layer (ilayer/calculate-value))
-          nnh (hlayer/calculate-value nni)
+          nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
           ;;nno (olayer/calculate-value nnh)
         ]
-    nni
+    nnh
   )
   
   ;;(pprint/pprint results)
