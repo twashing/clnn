@@ -78,7 +78,6 @@
       (if (and  (-> loc zip/node map?) 
                 (-> loc zip/node (contains?   :key)))
         (do
-        ;;(println (str "... " (zip/node loc)))
         (recur  (zip/next
                   (zip/edit loc merge
                     

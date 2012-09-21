@@ -36,7 +36,7 @@
 )
 
 ;; CALCULATE VALUES
-(defn calculate-value [neural-layer]
+(defn calculate-leaf-value [input-layer neural-layer]
   
   (loop [loc (zip/zipper  (fn [node]
                             (or (map? node)
@@ -57,17 +57,15 @@
     (if (zip/end? loc)
       (zip/root loc)
       (if (and  (-> loc zip/node map?) 
-                (-> loc zip/node (contains?   :key)))
+                (-> loc zip/node (contains? :input-id)))
         (do
-        ;;(println (str "... " (zip/node loc)))
         (recur  (zip/next
                   (zip/edit loc merge
                     
-                    (let  [ val (:value (zip/node loc))
+                    (let  [ val 0 ;; lookup value based on input-id (:value (zip/node loc))
                             wei (:weight (zip/node loc))
                             calculated (* val wei) ]
                           { :calculated calculated })
-                    
                   ))) 
         )
         (recur (zip/next loc))
@@ -75,6 +73,20 @@
     ) 
   )
 )
+(defn calculate-final-value [ech-map]
+  (merge ech-map  { :calcualted-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
+                                              0 
+                                              (:inputs ech-map))
+                  }
+  )
+)
+(defn calculate-value [input-layer neural-layer]
+  
+  ;; first calculate leaf values, then map calculated-values over the result list
+  (map calculate-final-value (calculate-leaf-value input-layer neural-layer))
+)
+
+
 
 ;; Linear Combiner & Activation FUNCTIONS
 (defn linear-combiner
