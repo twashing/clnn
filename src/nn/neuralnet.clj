@@ -51,63 +51,19 @@
 )
 
 
-;; --- propogation
-
-(defn trigger-neurons [neural-network]
-  
-  ;; set value (for bid)
-  
-  ;; trigger activation
-)
-(defn calculate-total-error []
-  
-  ;; ... 
-)
-(defn propogate-error []
-  
-  ;; ... 
-)
-(defn update-weights []
-  
+;; --- propogation 
+(defn update-weights []  
   ;; ...
-  
 )
 
-;; referencing this page: http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html
-(defn propogation-resilient [neural-network next-tick]
-  
-  ;; propagate price signal (start with bid) through the network
-  (let  [ nni (-> neural-network :input-layer (ilayer/calculate-value))
-          nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
-          nno (olayer/calculate-value nnh (:output-layer neural-network))
-        ]
-    
-    ;; in output neurons, calculate error between output (start with bid) and actual bid
-    (def calculated-ask (-> nno first :calcualted-value))
-    (def actual-ask (second next-tick))
-    (def ask-error (- calculated-ask actual-ask))
-    nno
-  )
-  
-  ;;(pprint/pprint results)
-  
-
-  
-  ;; apply total error to weight in each neuron -> going backwards through neuralnet 
-  
-  ;; apply weight change using ... partial derivative of the weighted error... -> going forwards through the neuralnet
-  
-)
 
 (defn create-neural-network [single-tick-data]
   
   (let [
         input-layer (ilayer/create-input-layer single-tick-data)
-        hidden-layer (hlayer/create-hidden-layer input-layer)
-        
+        hidden-layer (hlayer/create-hidden-layer input-layer)        
         output-layer (olayer/create-output-layer hidden-layer)
        ]
-    
     {:input-layer input-layer
      :hidden-layer hidden-layer
      :output-layer output-layer
@@ -115,33 +71,70 @@
   )
 )
 
+
+;; referencing this page: http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html
+(defn feed-forward [neural-network]
+  
+  ;; propagate price signal (start with bid) through the network
+  (let  [ nni (-> neural-network :input-layer (ilayer/calculate-value))
+          nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
+          nno (olayer/calculate-value nnh (:output-layer neural-network))
+        ]    
+    nno
+  )
+)
+(defn calculate-total-error [nlayer next-tick]
+  
+  ;; in output neurons, calculate error between output (start with bid) and actual bid
+  (let [calculated-ask (-> nlayer first :calculted-value)
+        actual-ask (-> next-tick second Double/parseDouble)
+        ask-error (- calculated-ask actual-ask)
+        ]
+    ask-error
+  )
+)
+(defn propogate-error []
+  
+  ;; ... 
+)
+
+
+
+;;(pprint/pprint results)
+
+;; apply total error to weight in each neuron -> going backwards through neuralnet 
+
+;; apply weight change using ... partial derivative of the weighted error... -> going forwards through the neuralnet
+
+
+
 (use 'clojure.stacktrace)
 
 
+(defn thing []
 
-
-#_(defn thing []    
-
-(def train-data (config/load-train-data))
-(def first-tick (second train-data))
-(def neural-network (create-neural-network first-tick))
-
-(def iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }))
-(def next-tick (nth train-data 2))
-
-(def nn (propogation-resilient neural-network next-tick))
-(pprint/pprint nn)
-
-
+    (def train-data (config/load-train-data))
+    (def first-tick (second train-data))
+    (def neural-network (create-neural-network first-tick))
+    
+    (def iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }))
+    (def next-tick (nth train-data 2))
+    
+    (def nn (feed-forward neural-network))
+    
+    (def terror (calculate-total-error nn next-tick))
+    (pprint/pprint nn)
+    
+    
+    
     ;; run 1 iteration... see results
-    (def nn (propogation-resilient neural-network next-tick))
+    (def nn (feed-forward neural-network next-tick))
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
     
     
     ;; train until an acceptable margin of error
     
 )
-
 
 ;; by default this i) takes the train data and 2) combiner and activation functions on hidden layer
 
