@@ -92,7 +92,7 @@
   )
 )
 (defn calculate-final-value [ech-map]
-  (merge ech-map  { :calcualted-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
+  (merge ech-map  { :calculted-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
                                               0 
                                               (:inputs ech-map))
                   }

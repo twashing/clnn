@@ -81,12 +81,17 @@
           nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
           nno (olayer/calculate-value nnh (:output-layer neural-network))
         ]
+    
+    ;; in output neurons, calculate error between output (start with bid) and actual bid
+    (def calculated-ask (-> nno first :calcualted-value))
+    (def actual-ask (second next-tick))
+    (def ask-error (- calculated-ask actual-ask))
     nno
   )
   
   ;;(pprint/pprint results)
   
-  ;; in output neurons, calculate error between output (start with bid) and actual bid
+
   
   ;; apply total error to weight in each neuron -> going backwards through neuralnet 
   
@@ -110,18 +115,24 @@
   )
 )
 
-(defn thing []
-  
-  (let [train-data (config/load-train-data)
-        first-tick (second train-data)
-        neural-network (create-neural-network first-tick)
-        
-        iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }) ;; record tick & neuraln result
-        next-tick (nth train-data 2)
-       ]
-    
-    (pprint/pprint neural-network)
-    
+(use 'clojure.stacktrace)
+
+
+
+
+#_(defn thing []    
+
+(def train-data (config/load-train-data))
+(def first-tick (second train-data))
+(def neural-network (create-neural-network first-tick))
+
+(def iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }))
+(def next-tick (nth train-data 2))
+
+(def nn (propogation-resilient neural-network next-tick))
+(pprint/pprint nn)
+
+
     ;; run 1 iteration... see results
     (def nn (propogation-resilient neural-network next-tick))
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
@@ -129,7 +140,6 @@
     
     ;; train until an acceptable margin of error
     
-  )
 )
 
 
