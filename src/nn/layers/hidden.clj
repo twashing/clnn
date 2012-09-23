@@ -38,15 +38,11 @@
 
 ;; CALCULATE VALUES
 (defn calculate-leaf-value [input-layer neural-layer]
-  (println (str "Sanity check... " input-layer))
-  (loop [loc (layers/create-zipper neural-layer)]
   
+  (loop [loc (layers/create-zipper neural-layer)]
+    
     (if (zip/end? loc)
       (zip/root loc)
-      (do
-      (println (str "... [" (zip/node loc) "] > [" (first (filter (fn [ech]
-                                                                    (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
-                                                                  input-layer)) "]"))
       (if (and  (-> loc zip/node map?) 
                 (-> loc zip/node (contains? :input-id)))
         (recur  (zip/next
@@ -60,7 +56,6 @@
                           { :calculated calculated })
                   ))) 
         (recur (zip/next loc))
-      )
       )
     ) 
   )
@@ -76,7 +71,6 @@
   
   ;; first calculate leaf values, then map calculated-values over the result list
   (map calculate-final-value (calculate-leaf-value input-layer neural-layer))
-  ;;(calculate-final-value (calculate-leaf-value input-layer neural-layer))
 )
 
 
