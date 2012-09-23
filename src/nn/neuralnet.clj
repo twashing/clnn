@@ -64,9 +64,9 @@
         hidden-layer (hlayer/create-hidden-layer input-layer)        
         output-layer (olayer/create-output-layer hidden-layer)
        ]
-    {:input-layer input-layer
-     :hidden-layer hidden-layer
-     :output-layer output-layer
+    {:input-layer (first input-layer)
+     :hidden-layer (first hidden-layer)
+     :output-layer (first output-layer)
     }
   )
 )
@@ -76,11 +76,14 @@
 (defn feed-forward [neural-network]
   
   ;; propagate price signal (start with bid) through the network
-  (let  [ nni (-> neural-network :input-layer (ilayer/calculate-value))
-          nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
-          nno (olayer/calculate-value nnh (:output-layer neural-network))
+  (let  [ nni (ilayer/calculate-value (:input-layer neural-network))
+          nnh nil ;;(hlayer/calculate-value nni (:hidden-layer neural-network))
+          nno nil ;;(olayer/calculate-value nnh (:output-layer neural-network))
         ]    
-    nno
+    {:input-layer nni
+     :hidden-layer nnh
+     :output-layer nno
+    }
   )
 )
 (defn calculate-total-error [nlayer next-tick]
@@ -93,9 +96,15 @@
     ask-error
   )
 )
-(defn propogate-error []
+(defn propogate-error [neural-network]
   
-  ;; ... 
+  ;; 
+  (let [nei (-> neural-network :input-layer ilayer/calculate-error)
+        ;;neh (-> neural-network :input-layer hlayer/calculate-error)
+        ;;neo (-> neural-network :input-layer olayer/calculate-error)
+       ]
+    
+  )
 )
 
 
@@ -122,7 +131,7 @@
     
     (def nn (feed-forward neural-network))
     
-    (def terror (calculate-total-error nn next-tick))
+    (def terror (calculate-total-error (:output-layer nn) next-tick))
     (pprint/pprint nn)
     
     

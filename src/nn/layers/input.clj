@@ -2,6 +2,7 @@
   (:require [clj-time.format :as cformat]
             [clj-time.coerce :as ccoerce]
             [clojure.zip :as zip]
+            [nn.layers.layers :as layers]
             [nn.util :as util]
   )
 )
@@ -20,10 +21,6 @@
 )
 (defn create-input-neuron [inputs]
   
-  #_{:key key
-   :value value
-   :weight (rand)
-  }
   {:inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) :bias 0 }) '() inputs)
    :id (util/generate-id)
   }
@@ -57,21 +54,7 @@
 ;; CALCULATE VALUES
 (defn calculate-leaf-value [neural-layer]
   
-  (loop [loc (zip/zipper  (fn [node]
-                            (or (map? node)
-                                (list? node)))
-                          (fn [node]
-                            (cond 
-                              (nil? node)   nil
-                              (map? node)   (:inputs node)
-                              :else         node))
-                          (fn [node children]
-                            (cond
-                              (nil? node)   nil
-                              (map? node)   (assoc node :inputs children)
-                              (list? node)  (into '() children)
-                              :else       node))
-                          neural-layer)]
+  (loop [loc (layers/create-zipper neural-layer)]
     
     (if (zip/end? loc)
       (zip/root loc)
@@ -104,5 +87,11 @@
   (map calculate-final-value (calculate-leaf-value neural-layer))
 )
 
+
+;; CALCULATE ERROR
+(defn calculate-error [neural-layer]
+
+  
+)
 
 

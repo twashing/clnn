@@ -2,6 +2,7 @@
 
   (:require [incanter.core :as incanter]
             [clojure.zip :as zip]
+            [nn.layers.layers :as layers]
             [nn.util :as util])
 )
 
@@ -38,22 +39,8 @@
 ;; CALCULATE VALUES
 (defn calculate-leaf-value [input-layer neural-layer]
   
-  (loop [loc (zip/zipper  (fn [node]
-                            (or (map? node)
-                                (list? node)))
-                          (fn [node]
-                            (cond 
-                              (nil? node)   nil
-                              (map? node)   (:inputs node)
-                              :else         node))
-                          (fn [node children]
-                            (cond
-                              (nil? node)   nil
-                              (map? node)   (assoc node :inputs children)
-                              (list? node)  (into '() children)
-                              :else       node))
-                          neural-layer)]
-    
+  (loop [loc (layers/create-zipper neural-layer)]
+  
     (if (zip/end? loc)
       (zip/root loc)
       (if (and  (-> loc zip/node map?) 
@@ -83,6 +70,7 @@
 (defn calculate-value [input-layer neural-layer]
   
   ;; first calculate leaf values, then map calculated-values over the result list
+  ;;(map calculate-final-value (calculate-leaf-value input-layer neural-layer))
   (map calculate-final-value (calculate-leaf-value input-layer neural-layer))
 )
 
