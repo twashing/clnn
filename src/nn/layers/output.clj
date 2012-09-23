@@ -31,7 +31,7 @@
 ;; CALCULATE VALUES
 (defn traverse-neural-layer
   "A common way to traverse the :output-layer of the neural network"
-  [ilayer neural-layer edit-fn]
+  [dependent-layer neural-layer edit-fn]
   
   (loop [loc (layers/create-zipper neural-layer)]
     
@@ -40,7 +40,8 @@
       (if (and  (-> loc zip/node map?) 
                 (-> loc zip/node (contains? :input-id)))
         (recur  (zip/next
-                  (zip/edit loc merge (edit-fn loc ilayer))))
+                 (zip/edit loc merge (edit-fn loc dependent-layer))))
+        
         (recur (zip/next loc))
       )
     )
@@ -48,44 +49,22 @@
 )
 
 (defn calculate-leaf-value [hidden-layer neural-layer]
-
-
-      (traverse-neural-layer hidden-layer neural-layer    ;; pass in the output layer
-                             (fn [loc hlayer]    ;; pass in the edit fn
-                               (let  [ val (:calculted-value (first (filter (fn [ech]
-                                                                              (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
-                                                                    hlayer)))
-                                       wei (:weight (zip/node loc))
-                                       calculated (* val wei) ]
-                                 { :calculated calculated }))
-      )
-
   
-  #_(loop [loc (layers/create-zipper neural-layer)]
-    (if (zip/end? loc)
-      (zip/root loc)
-      (if (and  (-> loc zip/node map?) 
-                (-> loc zip/node (contains? :input-id)))
-        (recur  (zip/next
-                  (zip/edit loc merge
-                    
-                    
-                    (let  [ val (:calculted-value (first (filter (fn [ech]
-                                                                    (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
-                                                                  hidden-layer)))
-                            wei (:weight (zip/node loc))
-                            calculated (* val wei) ]
-                          { :calculated calculated })
-                  ))) 
-        (recur (zip/next loc))
-      )
-    ) 
+  (traverse-neural-layer hidden-layer neural-layer    ;; pass in the output layer
+                         (fn [loc hlayer]             ;; pass in the edit fn
+                           
+                           (let  [ val (:calculated-value (first (filter (fn [ech]
+                                                                           (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
+                                                                 hlayer)))
+                                   wei (:weight (zip/node loc))
+                                   calculated (* val wei) ]
+                             { :calculated calculated }))
   )
 )
 (defn calculate-final-value [ech-map]
-  (merge ech-map  { :calculted-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
-                                              0 
-                                              (:inputs ech-map))
+  (merge ech-map  { :calculated-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
+                                               0 
+                                               (:inputs ech-map))
                   }
   )
 )
@@ -99,27 +78,20 @@
 ;; CALCULATE ERRORS
 
 (defn calculate-leaf-error [neural-layer total-error]
+  (println "Sanity check ...")
+  (traverse-neural-layer nil neural-layer    ;; pass in i) no dependent layer and ii) the output layer
+                         (fn [loc _]    ;; pass in the edit fn
 
-  (loop [loc (layers/create-zipper neural-layer)]
-    (if (zip/end? loc)
-      (zip/root loc)
-      (if (and  (-> loc zip/node map?) 
-                (-> loc zip/node (contains? :input-id)))
-        (recur  (zip/next
-                  (zip/edit loc merge
-                    
-                    (let  [ wei (:weight (zip/node loc))
-                            calculated (* wei total-error) ]
-                          { :error calculated })
-                  ))) 
-        (recur (zip/next loc))
-      )
-    ) 
+                           (println (str "... " (zip/node loc)))
+                           (let  [ wei (:weight (zip/node loc))
+                                   error (* wei total-error) ]
+                             { :error error })
+                         )
   )
 )
 
 (defn calculate-error [neural-layer total-error]
-  
+  (calculate-leaf-error neural-layer total-error)
 )
 
 

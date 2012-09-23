@@ -79,7 +79,7 @@
   (let  [ nni (ilayer/calculate-value (:input-layer neural-network))
           nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
           nno (olayer/calculate-value nnh (:output-layer neural-network))
-        ]    
+        ]
     {:input-layer nni
      :hidden-layer nnh
      :output-layer nno
@@ -89,7 +89,7 @@
 (defn calculate-total-error [nlayer next-tick]
   
   ;; in output neurons, calculate error between output (start with bid) and actual bid
-  (let [calculated-ask (-> nlayer first :calculted-value)
+  (let [calculated-ask (-> nlayer first :calculated-value)
         actual-ask (-> next-tick second Double/parseDouble)
         ask-error (- calculated-ask actual-ask)
         ]
@@ -136,6 +136,10 @@
     
     (pprint/pprint nn)
     (pprint/pprint neural-network)
+
+    (olayer/calculate-leaf-error (:output-layer nn) terror)
+    (def oerror (olayer/calculate-error (:output-layer nn) terror))
+    
     
     ;; run 1 iteration... see results
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
