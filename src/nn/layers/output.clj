@@ -32,7 +32,14 @@
 (defn traverse-neural-layer
   "A common way to traverse the :output-layer of the neural network"
   [dependent-layer neural-layer edit-fn]
+
+  { :pre [(not (nil? neural-layer))
+          (or (list? neural-layer)
+              (seq? neural-layer))
+         ]
+  }
   
+  (println (str "0_o... [" (type neural-layer) "]" neural-layer))
   (loop [loc (layers/create-zipper neural-layer)]
     
     (if (zip/end? loc)
@@ -41,7 +48,6 @@
                 (-> loc zip/node (contains? :input-id)))
         (recur  (zip/next
                  (zip/edit loc merge (edit-fn loc dependent-layer))))
-        
         (recur (zip/next loc))
       )
     )
@@ -78,9 +84,9 @@
 ;; CALCULATE ERRORS
 
 (defn calculate-leaf-error [neural-layer total-error]
-  (println "Sanity check ...")
+  
   (traverse-neural-layer nil neural-layer    ;; pass in i) no dependent layer and ii) the output layer
-                         (fn [loc _]    ;; pass in the edit fn
+                         (fn [loc _]         ;; pass in the edit fn
 
                            (println (str "... " (zip/node loc)))
                            (let  [ wei (:weight (zip/node loc))
@@ -90,8 +96,13 @@
   )
 )
 
+(defn calculate-final-error [ech-map]
+  (merge ech-map { :calculated-error (reduce (fn [rst nxt] (+ rst (:error nxt))) 
+                                             0 
+                                             (:inputs ech-map))})
+)
 (defn calculate-error [neural-layer total-error]
-  (calculate-leaf-error neural-layer total-error)
+  (map calculate-final-error (calculate-leaf-error neural-layer total-error))
 )
 
 

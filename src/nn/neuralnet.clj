@@ -138,6 +138,10 @@
     (pprint/pprint neural-network)
 
     (olayer/calculate-leaf-error (:output-layer nn) terror)
+    (olayer/traverse-neural-layer nil (:output-layer nn) (fn [loc dlayer] (println "...") ))
+    
+    (type (:output-layer nn))
+    
     (def oerror (olayer/calculate-error (:output-layer nn) terror))
     
     
