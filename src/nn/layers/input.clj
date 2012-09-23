@@ -84,7 +84,7 @@
 (defn calculate-value [neural-layer]
   
   ;; first calculate leaf values, then map calculated-values over the result list
-  (calculate-final-value (calculate-leaf-value neural-layer))
+  (map calculate-final-value (calculate-leaf-value neural-layer))
 )
 
 
