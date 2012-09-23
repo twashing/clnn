@@ -134,7 +134,7 @@
     (def terror (calculate-total-error (:output-layer nn) next-tick))
     (pprint/pprint nn)
     
-    
+    (ilayer/calculate-leaf-value (:input-layer neural-network))
     
     ;; run 1 iteration... see results
     (def nn (feed-forward neural-network next-tick))
