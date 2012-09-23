@@ -99,9 +99,10 @@
 (defn propogate-error [neural-network]
   
   ;; 
-  (let [nei (-> neural-network :input-layer ilayer/calculate-error)
+  (let [
+        ;;nei (-> neural-network :input-layer ilayer/calculate-error)
         ;;neh (-> neural-network :input-layer hlayer/calculate-error)
-        ;;neo (-> neural-network :input-layer olayer/calculate-error)
+        neo (-> neural-network :output-layer olayer/calculate-error)
        ]
     
   )
@@ -132,16 +133,11 @@
     (def nn (feed-forward neural-network))
     
     (def terror (calculate-total-error (:output-layer nn) next-tick))
-
+    
     (pprint/pprint nn)
     (pprint/pprint neural-network)
     
-    (def nni (ilayer/calculate-value (:input-layer neural-network)))
-    (def nnh (hlayer/calculate-leaf-value nni (:hidden-layer neural-network)))
-    
-    
     ;; run 1 iteration... see results
-    (def nn (feed-forward neural-network next-tick))
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
     
     
