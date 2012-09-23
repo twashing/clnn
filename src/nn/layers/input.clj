@@ -75,7 +75,7 @@
   )
 )
 (defn calculate-final-value [ech-map]
-  (merge ech-map  { :calculted-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
+  (merge ech-map  { :calculated-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
                                               0 
                                               (:inputs ech-map))
                   }
@@ -84,7 +84,6 @@
 (defn calculate-value [neural-layer]
   
   ;; first calculate leaf values, then map calculated-values over the result list
-  ;;(map calculate-final-value (calculate-leaf-value neural-layer))
   (calculate-final-value (calculate-leaf-value neural-layer))
 )
 

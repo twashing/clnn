@@ -64,9 +64,9 @@
         hidden-layer (hlayer/create-hidden-layer input-layer)        
         output-layer (olayer/create-output-layer hidden-layer)
        ]
-    {:input-layer (first input-layer)
-     :hidden-layer (first hidden-layer)
-     :output-layer (first output-layer)
+    {:input-layer input-layer
+     :hidden-layer hidden-layer
+     :output-layer output-layer
     }
   )
 )
@@ -77,7 +77,7 @@
   
   ;; propagate price signal (start with bid) through the network
   (let  [ nni (ilayer/calculate-value (:input-layer neural-network))
-          nnh nil ;;(hlayer/calculate-value nni (:hidden-layer neural-network))
+          nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
           nno nil ;;(olayer/calculate-value nnh (:output-layer neural-network))
         ]    
     {:input-layer nni
@@ -132,9 +132,13 @@
     (def nn (feed-forward neural-network))
     
     (def terror (calculate-total-error (:output-layer nn) next-tick))
+
     (pprint/pprint nn)
+    (pprint/pprint neural-network)
     
-    (ilayer/calculate-leaf-value (:input-layer neural-network))
+    (def nni (ilayer/calculate-value (:input-layer neural-network)))
+    (def nnh (hlayer/calculate-leaf-value nni (:hidden-layer neural-network)))
+    
     
     ;; run 1 iteration... see results
     (def nn (feed-forward neural-network next-tick))
