@@ -39,27 +39,17 @@
 
 
 ;; CALCULATE VALUES
-(defn calculate-leaf-value [input-layer neural-layer]
-  
-  (loop [loc (layers/create-zipper neural-layer)]
-    
-    (if (zip/end? loc)
-      (zip/root loc)
-      (if (and  (-> loc zip/node map?) 
-                (-> loc zip/node (contains? :input-id)))
-        (recur  (zip/next
-                  (zip/edit loc merge
-                    
-                    (let  [ val (:calculated-value (first (filter (fn [ech]
+(defn calculate-leaf-value [dependent-layer neural-layer]
+
+  (layers/traverse-neural-layer dependent-layer neural-layer    ;; pass in the output layer
+                         (fn [loc hlayer]             ;; pass in the edit fn
+
+                           (let  [ val (:calculated-value (first (filter (fn [ech]
                                                                     (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
-                                                                  input-layer)))
-                            wei (:weight (zip/node loc))
-                            calculated (* val wei) ]
-                          { :calculated calculated })
-                  ))) 
-        (recur (zip/next loc))
-      )
-    ) 
+                                                                 dependent-layer)))
+                                   wei (:weight (zip/node loc))
+                                   calculated (* val wei) ]
+                             { :calculated calculated }) )
   )
 )
 (defn calculate-final-value [ech-map]

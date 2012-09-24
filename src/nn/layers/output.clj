@@ -29,33 +29,9 @@
 
 
 ;; CALCULATE VALUES
-(defn traverse-neural-layer
-  "A common way to traverse the :output-layer of the neural network"
-  [dependent-layer neural-layer edit-fn]
-
-  { :pre [(not (nil? neural-layer))
-          (or (list? neural-layer)
-              (seq? neural-layer))
-         ]
-  }
-  
-  (loop [loc (layers/create-zipper neural-layer)]
-    
-    (if (zip/end? loc)
-      (zip/root loc)
-      (if (and  (-> loc zip/node map?) 
-                (-> loc zip/node (contains? :input-id)))
-        (recur  (zip/next
-                 (zip/edit loc merge (edit-fn loc dependent-layer))))
-        (recur (zip/next loc))
-      )
-    )
-  )
-)
-
 (defn calculate-leaf-value [hidden-layer neural-layer]
   
-  (traverse-neural-layer hidden-layer neural-layer    ;; pass in the output layer
+  (layers/traverse-neural-layer hidden-layer neural-layer    ;; pass in the output layer
                          (fn [loc hlayer]             ;; pass in the edit fn
                            
                            (let  [ val (:calculated-value (first (filter (fn [ech]
