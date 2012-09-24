@@ -143,7 +143,7 @@
     (type (:output-layer nn))
     
     (def oerror (olayer/calculate-error (:output-layer nn) terror))
-    
+    (def herror (hlayer/calculate-error (:hidden-layer nn) terror))
     
     ;; run 1 iteration... see results
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))

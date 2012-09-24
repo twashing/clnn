@@ -23,3 +23,29 @@
                   :else       node))
                neural-layer)
 )
+
+;; CALCULATE ERRORS
+(defn traverse-neural-layer
+  "A common way to traverse the :output-layer of the neural network"
+  [dependent-layer neural-layer edit-fn]
+
+  { :pre [(not (nil? neural-layer))
+          (or (list? neural-layer)
+              (seq? neural-layer))
+         ]
+  }
+  
+  (loop [loc (create-zipper neural-layer)]
+    
+    (if (zip/end? loc)
+      (zip/root loc)
+      (if (and  (-> loc zip/node map?) 
+                (-> loc zip/node (contains? :input-id)))
+        (recur  (zip/next
+                 (zip/edit loc merge (edit-fn loc dependent-layer))))
+        (recur (zip/next loc))
+      )
+    )
+  )
+)
+

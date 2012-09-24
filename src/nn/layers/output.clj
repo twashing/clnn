@@ -39,7 +39,6 @@
          ]
   }
   
-  (println (str "0_o... [" (type neural-layer) "]" neural-layer))
   (loop [loc (layers/create-zipper neural-layer)]
     
     (if (zip/end? loc)
@@ -82,13 +81,11 @@
 
 
 ;; CALCULATE ERRORS
-
 (defn calculate-leaf-error [neural-layer total-error]
   
   (traverse-neural-layer nil neural-layer    ;; pass in i) no dependent layer and ii) the output layer
                          (fn [loc _]         ;; pass in the edit fn
-
-                           (println (str "... " (zip/node loc)))
+                           
                            (let  [ wei (:weight (zip/node loc))
                                    error (* wei total-error) ]
                              { :error error })

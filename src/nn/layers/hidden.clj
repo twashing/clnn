@@ -36,6 +36,8 @@
   )
 )
 
+
+
 ;; CALCULATE VALUES
 (defn calculate-leaf-value [input-layer neural-layer]
   
@@ -72,6 +74,32 @@
   ;; first calculate leaf values, then map calculated-values over the result list
   (map calculate-final-value (calculate-leaf-value input-layer neural-layer))
 )
+
+
+
+;; CALCULATE ERRORS
+(defn calculate-leaf-error [neural-layer total-error]
+  
+  (layers/traverse-neural-layer nil neural-layer    ;; pass in i) no dependent layer and ii) the output layer
+                         (fn [loc _]         ;; pass in the edit fn
+                           
+                           (let  [ wei (:weight (zip/node loc))
+                                   error (* wei total-error) ]
+                             { :error error })
+                         )
+  )
+)
+(defn calculate-final-error [ech-map]
+  (merge ech-map { :calculated-error (reduce (fn [rst nxt] (+ rst (:error nxt))) 
+                                             0 
+                                             (:inputs ech-map))})
+)
+(defn calculate-error [neural-layer total-error]
+  (map calculate-final-error (calculate-leaf-error neural-layer total-error))
+)
+
+
+
 
 
 
