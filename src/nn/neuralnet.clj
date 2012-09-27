@@ -123,28 +123,38 @@
 
 (defn thing []
 
+    ;; create neural network 
     (def train-data (config/load-train-data))
     (def first-tick (second train-data))
     (def neural-network (create-neural-network first-tick))
+
+    ;; feed inputs forward
+    (def nn (feed-forward neural-network))
+
+    ;; get total error 
+    (def terror (calculate-total-error (:output-layer nn) next-tick))
+    
+    
+    (pprint/pprint nn)
+    (pprint/pprint neural-network)
+    
+    
+    ;; propagate error back through the neural network
+    (def oerror (olayer/calculate-error (:output-layer nn) terror))
+    (def herror (hlayer/calculate-error (:hidden-layer nn) terror))
+    (def ierror (ilayer/calculate-error (:input-layer nn) terror))
+
+    (pprint/pprint ierror)
     
     (def iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }))
     (def next-tick (nth train-data 2))
     
-    (def nn (feed-forward neural-network))
-    
-    (def terror (calculate-total-error (:output-layer nn) next-tick))
-    
-    (pprint/pprint nn)
-    (pprint/pprint neural-network)
-
     (olayer/calculate-leaf-error (:output-layer nn) terror)
     (olayer/traverse-neural-layer nil (:output-layer nn) (fn [loc dlayer] (println "...") ))
     
+    
     (type (:output-layer nn))
-    
-    (def oerror (olayer/calculate-error (:output-layer nn) terror))
-    (def herror (hlayer/calculate-error (:hidden-layer nn) terror))
-    
+
     ;; run 1 iteration... see results
     (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
     

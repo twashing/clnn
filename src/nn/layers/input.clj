@@ -89,9 +89,33 @@
 
 
 ;; CALCULATE ERROR
-(defn calculate-error [neural-layer]
-
+(defn calculate-leaf-error [neural-layer total-error]
   
+  (loop [loc (layers/create-zipper neural-layer)]
+    
+    (if (zip/end? loc)
+      (zip/root loc)
+      (if (and  (-> loc zip/node map?) 
+                (-> loc zip/node (contains?   :key)))
+        (recur  (zip/next
+                  (zip/edit loc merge
+                    
+                    (let  [ wei (:weight (zip/node loc))
+                            error (* wei total-error) ]
+                      { :error error })
+                  ))) 
+        (recur (zip/next loc))
+      )
+    ) 
+  )
+)
+(defn calculate-final-error [ech-map]
+  (merge ech-map { :calculated-error (reduce (fn [rst nxt] (+ rst (:error nxt))) 
+                                             0 
+                                             (:inputs ech-map))})
+)
+(defn calculate-error [neural-layer total-error]
+  (map calculate-final-error (calculate-leaf-error neural-layer total-error))
 )
 
 
