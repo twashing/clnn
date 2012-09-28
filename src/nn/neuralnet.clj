@@ -136,7 +136,7 @@
     (def terror (calculate-total-error (:output-layer nn) next-tick))
     
     
-    (pprint/pprint nn)
+    (pprint/pprint (:input-layer nn))
     (pprint/pprint neural-network)
     
     

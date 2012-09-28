@@ -1,5 +1,6 @@
 (ns nn.layers.layers
   (:require [clojure.zip :as zip]
+            [incanter.core :as incanter]
   )
 )
 
@@ -22,6 +23,14 @@
                   (seq? node)   (into '() children)
                   :else       node))
                neural-layer)
+)
+
+
+(defn calculate-activation
+  "Common activation function"
+  [value]
+  
+  (/ 1 (+ 1 (incanter/exp (* -1 value))))
 )
 
 ;; CALCULATE ERRORS
