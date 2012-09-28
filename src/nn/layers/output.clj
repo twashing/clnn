@@ -42,10 +42,15 @@
                              { :calculated calculated }))
   )
 )
-(defn calculate-final-value [ech-map]
+#_(defn calculate-final-value [ech-map]
   (merge ech-map  { :calculated-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
                                                0 
                                                (:inputs ech-map))
+                  }
+  )
+)
+(defn calculate-final-value [ech-map]
+  (merge ech-map  { :calculated-value (-> ech-map layers/calculate-linear-combiner layers/calculate-activation)
                   }
   )
 )

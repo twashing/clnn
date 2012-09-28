@@ -136,7 +136,7 @@
     (def terror (calculate-total-error (:output-layer nn) next-tick))
     
     
-    (pprint/pprint (:input-layer nn))
+    (pprint/pprint (:output-layer nn))
     (pprint/pprint neural-network)
     
     
@@ -170,5 +170,6 @@
 ;; structure > to store previous tick data values
 
 ;; predict bid & ask
+
 
 
