@@ -59,7 +59,7 @@
 ;; CALCULATE ERRORS
 (defn calculate-leaf-error [neural-layer total-error]
   
-  (traverse-neural-layer nil neural-layer    ;; pass in i) no dependent layer and ii) the output layer
+  (layers/traverse-neural-layer nil neural-layer    ;; pass in i) no dependent layer and ii) the output layer
                          (fn [loc _]         ;; pass in the edit fn
                            
                            (let  [ wei (:weight (zip/node loc))
