@@ -4,7 +4,9 @@
   )
 )
 
-(defn create-zipper [neural-layer]
+(defn create-zipper
+  "Common way to create a zipper for the hidden and output layers"
+  [neural-layer]
 
   (zip/zipper  (fn [node]
                  (or (map? node)
@@ -26,6 +28,7 @@
 )
 
 
+;; NEURON CALCULATIONS
 (defn calculate-activation
   "Common activation function"
   [value]

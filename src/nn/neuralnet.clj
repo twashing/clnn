@@ -73,9 +73,10 @@
 
 
 ;; referencing this page: http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html
-(defn feed-forward [neural-network]
+(defn feed-forward
+  "propagate price signal (start with bid) through the network"
+  [neural-network]
   
-  ;; propagate price signal (start with bid) through the network
   (let  [ nni (ilayer/calculate-value (:input-layer neural-network))
           nnh (hlayer/calculate-value nni (:hidden-layer neural-network))
           nno (olayer/calculate-value nnh (:output-layer neural-network))
@@ -86,9 +87,10 @@
     }
   )
 )
-(defn calculate-total-error [nlayer next-tick]
+(defn calculate-total-error
+  "in output neurons, calculate error between output (start with bid) and actual bid"
+  [nlayer next-tick]
   
-  ;; in output neurons, calculate error between output (start with bid) and actual bid
   (let [calculated-ask (-> nlayer first :calculated-value)
         actual-ask (-> next-tick second Double/parseDouble)
         ask-error (- calculated-ask actual-ask)
@@ -96,15 +98,18 @@
     ask-error
   )
 )
-(defn propogate-error [neural-network]
+(defn propogate-error
+  "Propagate error back through the neural network"
+  [neural-network total-error]
   
-  ;; 
-  (let [
-        ;;nei (-> neural-network :input-layer ilayer/calculate-error)
-        ;;neh (-> neural-network :input-layer hlayer/calculate-error)
-        neo (-> neural-network :output-layer olayer/calculate-error)
+  (let [nno (olayer/calculate-error (:output-layer nn) total-error)
+        nnh (hlayer/calculate-error (:hidden-layer nn) total-error)
+        nni (ilayer/calculate-error (:input-layer nn) total-error)
        ]
-    
+    {:input-layer nni
+     :hidden-layer nnh
+     :output-layer nno
+    }
   )
 )
 
@@ -135,31 +140,24 @@
     (def next-tick (nth train-data 2))
     (def terror (calculate-total-error (:output-layer nn) next-tick))
     
+    ;; propagate error back through the neural network
+    (def nn-back (propogate-error nn terror))
+
+    ;; adjust weights for input, hidden and output values... 
+    ;; ...
+
+    ;; train until an acceptable margin of error
+    ;; ...
+
     
     (pprint/pprint (:output-layer nn))
     (pprint/pprint neural-network)
+    (pprint/pprint nn-back)
     
     
-    ;; propagate error back through the neural network
-    (def oerror (olayer/calculate-error (:output-layer nn) terror))
-    (def herror (hlayer/calculate-error (:hidden-layer nn) terror))
-    (def ierror (ilayer/calculate-error (:input-layer nn) terror))
-    
-    (pprint/pprint ierror)
-    
-    ;;(def iteration-history (conj [] { :tick-data first-tick :neural-network neural-network }))
-    
-    ;;(olayer/calculate-leaf-error (:output-layer nn) terror)
-    ;;(olayer/traverse-neural-layer nil (:output-layer nn) (fn [loc dlayer] (println "...") ))
-    
-    
-    ;;(type (:output-layer nn))
-
-    ;; run 1 iteration... see results
     ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
     
     
-    ;; train until an acceptable margin of error
     
 )
 
