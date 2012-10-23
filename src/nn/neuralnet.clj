@@ -102,12 +102,13 @@
   "Propagate error back through the neural network"
   [neural-network total-error]
   
-  (let [nno (olayer/calculate-error (:output-layer neural-network) total-error)
-        nnh (hlayer/calculate-error (:hidden-layer neural-network) total-error)
-        nni (ilayer/calculate-error (:input-layer neural-network) total-error)
+  (let [ nno (olayer/calculate-error (:output-layer neural-network) total-error)
+        ;;nnh (hlayer/calculate-error (:hidden-layer neural-network) total-error)
+        ;;nni (ilayer/calculate-error (:input-layer neural-network) total-error)
        ]
-    {:input-layer nni
-     :hidden-layer nnh
+    {
+     ;;:input-layer nni
+     ;;:hidden-layer nnh
      :output-layer nno
     }
   )
@@ -143,6 +144,7 @@
     ;; propagate error back through the neural network
     (def nn-back (propogate-error nn terror))
     
+    
     ;; adjust weights for input, hidden and output values... 
     ;; ...
     
@@ -151,6 +153,8 @@
     
     
     (pprint/pprint (:output-layer nn))
+    (pprint/pprint nn)
+    (pprint/pprint nn-back)
     (pprint/pprint neural-network)
     (pprint/pprint (:output-layer nn-back))
     

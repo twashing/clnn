@@ -2,6 +2,7 @@
   
   (:require [incanter.core :as incanter]
             [clojure.zip :as zip]
+            [clojure.pprint :as pprint]
             [nn.layers.layers :as layers]
             [nn.util :as util])
 )
@@ -90,18 +91,20 @@
   ;;    - theta (learning const) * partial derivative
   
   ;; for hidden layer... pass in input error from connecting neuron (do not use "total error")
-  (let [ cerror-neuron (map calculate-calculated-error (calculate-leaf-error neural-layer total-error))
+  (let [ cerror-neuron (first (map calculate-calculated-error (calculate-leaf-error neural-layer total-error)))
          berror-neuron (merge cerror-neuron { :backpropagated-error
                                               (* (:calculated-value cerror-neuron)
                                                  (- 1 (:calculated-value cerror-neuron))
-                                                 (:calculated-error))
+                                                 (:calculated-error cerror-neuron))
                                             })
         
-         pderiv-neuron (merge { :partial-derivative (* (:backpropagated-error berror-neuron)
-                                                       (:calculated-value berror-neuron))
-                              })
+         pderiv-neuron (merge berror-neuron { :partial-derivative (* (:backpropagated-error berror-neuron)
+                                                                     (:calculated-value berror-neuron))
+                                            })
         ]
     pderiv-neuron
+    ;;berror-neuron
+    ;;cerror-neuron
+  )
 )
-
 
