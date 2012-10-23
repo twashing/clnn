@@ -102,9 +102,9 @@
   "Propagate error back through the neural network"
   [neural-network total-error]
   
-  (let [nno (olayer/calculate-error (:output-layer nn) total-error)
-        nnh (hlayer/calculate-error (:hidden-layer nn) total-error)
-        nni (ilayer/calculate-error (:input-layer nn) total-error)
+  (let [nno (olayer/calculate-error (:output-layer neural-network) total-error)
+        nnh (hlayer/calculate-error (:hidden-layer neural-network) total-error)
+        nni (ilayer/calculate-error (:input-layer neural-network) total-error)
        ]
     {:input-layer nni
      :hidden-layer nnh
@@ -132,27 +132,27 @@
     (def train-data (config/load-train-data))
     (def first-tick (second train-data))
     (def neural-network (create-neural-network first-tick))
-
+    
     ;; feed inputs forward
     (def nn (feed-forward neural-network))
-
+    
     ;; get total error
     (def next-tick (nth train-data 2))
     (def terror (calculate-total-error (:output-layer nn) next-tick))
     
     ;; propagate error back through the neural network
     (def nn-back (propogate-error nn terror))
-
+    
     ;; adjust weights for input, hidden and output values... 
     ;; ...
-
+    
     ;; train until an acceptable margin of error
     ;; ...
-
+    
     
     (pprint/pprint (:output-layer nn))
     (pprint/pprint neural-network)
-    (pprint/pprint nn-back)
+    (pprint/pprint (:output-layer nn-back))
     
     
     ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))

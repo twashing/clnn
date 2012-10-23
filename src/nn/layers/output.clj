@@ -74,13 +74,34 @@
   )
 )
 
-(defn calculate-final-error [ech-map]
+(defn calculate-calculated-error [ech-map]
+  
   (merge ech-map { :calculated-error (reduce (fn [rst nxt] (+ rst (:error nxt))) 
                                              0 
                                              (:inputs ech-map))})
 )
 (defn calculate-error [neural-layer total-error]
-  (map calculate-final-error (calculate-leaf-error neural-layer total-error))
+  
+  ;; below is :calculated-error A)
+  ;; backpropagated error B) is:                  :calculated-value * ( 1 - :calculated-value ) * A)
+  ;; partial derivative is:                       B) * :calculated-value
+  
+  ;; weight change is:
+  ;;    - theta (learning const) * partial derivative
+  
+  ;; for hidden layer... pass in input error from connecting neuron (do not use "total error")
+  (let [ cerror-neuron (map calculate-calculated-error (calculate-leaf-error neural-layer total-error))
+         berror-neuron (merge cerror-neuron { :backpropagated-error
+                                              (* (:calculated-value cerror-neuron)
+                                                 (- 1 (:calculated-value cerror-neuron))
+                                                 (:calculated-error))
+                                            })
+        
+         pderiv-neuron (merge { :partial-derivative (* (:backpropagated-error berror-neuron)
+                                                       (:calculated-value berror-neuron))
+                              })
+        ]
+    pderiv-neuron
 )
 
 
