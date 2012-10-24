@@ -83,11 +83,11 @@
 )
 (defn calculate-error [neural-layer total-error]
   
-  ;; below is :calculated-error A)
-  ;; backpropagated error B) is:                  :calculated-value * ( 1 - :calculated-value ) * A)
-  ;; partial derivative is:                       B) * :calculated-value
+  ;; take :calculated-error A)
+  ;; backpropagated error   B) is:                  :calculated-value * ( 1 - :calculated-value ) * A)
+  ;; partial derivative     C) is:                  B) * :calculated-value
   
-  ;; weight change is:
+  ;; weight change          D) is:
   ;;    - theta (learning const) * partial derivative
   
   ;; for hidden layer... pass in input error from connecting neuron (do not use "total error")
@@ -103,8 +103,6 @@
                                             })
         ]
     pderiv-neuron
-    ;;berror-neuron
-    ;;cerror-neuron
   )
 )
 

@@ -103,12 +103,12 @@
   [neural-network total-error]
   
   (let [ nno (olayer/calculate-error (:output-layer neural-network) total-error)
-        ;;nnh (hlayer/calculate-error (:hidden-layer neural-network) total-error)
+         nnh (hlayer/calculate-error (:hidden-layer neural-network) total-error)
         ;;nni (ilayer/calculate-error (:input-layer neural-network) total-error)
        ]
     {
      ;;:input-layer nni
-     ;;:hidden-layer nnh
+     :hidden-layer nnh
      :output-layer nno
     }
   )

@@ -84,13 +84,27 @@
                          )
   )
 )
-(defn calculate-final-error [ech-map]
+(defn calculate-calculated-error [ech-map]
   (merge ech-map { :calculated-error (reduce (fn [rst nxt] (+ rst (:error nxt))) 
                                              0 
                                              (:inputs ech-map))})
 )
-(defn calculate-error [neural-layer total-error]
-  (map calculate-final-error (calculate-leaf-error neural-layer total-error))
+(defn calculate-error [neural-layer local-error]
+  
+  ;;(map calculate-calculated-error (calculate-leaf-error neural-layer total-error))
+  (let [ cerror-neuron (first (map calculate-calculated-error (calculate-leaf-error neural-layer local-error)))
+         berror-neuron (merge cerror-neuron { :backpropagated-error
+                                              (* (:calculated-value cerror-neuron)
+                                                 (- 1 (:calculated-value cerror-neuron))
+                                                 (:calculated-error cerror-neuron))
+                                            })
+        
+         pderiv-neuron (merge berror-neuron { :partial-derivative (* (:backpropagated-error berror-neuron)
+                                                                     (:calculated-value berror-neuron))
+                                            })
+        ]
+    pderiv-neuron
+  )
 )
 
 
