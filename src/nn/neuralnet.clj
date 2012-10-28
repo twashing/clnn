@@ -162,7 +162,6 @@
     ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
     
     
-    
 )
 
 ;; by default this i) takes the train data and 2) combiner and activation functions on hidden layer
