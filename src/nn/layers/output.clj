@@ -91,18 +91,20 @@
   ;;    - theta (learning const) * partial derivative
   
   ;; for hidden layer... pass in input error from connecting neuron (do not use "total error")
-  (let [ cerror-neuron (first (map calculate-calculated-error (calculate-leaf-error neural-layer total-error)))
-         berror-neuron (merge cerror-neuron { :backpropagated-error
-                                              (* (:calculated-value cerror-neuron)
-                                                 (- 1 (:calculated-value cerror-neuron))
-                                                 (:calculated-error cerror-neuron))
-                                            })
+  (let [ cerror-layer (map calculate-calculated-error (calculate-leaf-error neural-layer total-error))
         
-         pderiv-neuron (merge berror-neuron { :partial-derivative (* (:backpropagated-error berror-neuron)
-                                                                     (:calculated-value berror-neuron))
-                                            })
-        ]
-    pderiv-neuron
+         berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error (* (:calculated-value eneuron)
+                                                                                   (- 1 (:calculated-value eneuron))
+                                                                                   (:calculated-error eneuron))
+                                                        }))
+                           cerror-layer)
+        
+         pderiv-layer (map (fn [eneuron] (merge eneuron { :partial-derivative (* (:backpropagated-error eneuron)
+                                                                                 (:calculated-value eneuron))
+                                                        }))
+                           berror-layer)
+       ]
+    pderiv-layer
   )
 )
 
