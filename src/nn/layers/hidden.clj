@@ -98,32 +98,39 @@
                        ;; calculated-error = weight * error + ...
                        ;;(filter (fn [ee] (contains? (filter (fn [ef] (contains? ef  (:inputs ee) ) error-layer)
                             
-         cerror-layer  (layers/traverse-neurons error-layer neural-layer (fn [loc dep-layer]                            ;; 1. traverse neural-layer
+         cerror-layer  (layers/traverse-neurons error-layer neural-layer (fn [loc dep-layer]                           ;; 1. traverse neural-layer
                                                                                 
                                                                                 (let [ iid     (:id (zip/node loc))    ;; 2. for each neuron, find matching input in dep-layer
-                                                                                       ilist   (flatten
+                                                                                       ilist   (flatten       ;; 3. build a list of { :weight 0.7879318625211504 :input-error -0.39493030034305143 }
                                                                                                  (reduce
-                                                                                                  (fn [rst inp]
-                                                                                                    #_(println (filter (fn [x]
-                                                                                                                         (println (str "1[" iid "] / 2[" (:input-id x) "]"))
-                                                                                                                         (= iid (:input-id x)))
-                                                                                                                     (:inputs inp)))
-                                                                                                    #_rst
-                                                                                                    (conj rst (filter (fn [x]
-                                                                                                                         (println (str "1[" iid "] / 2[" (:input-id x) "]"))
-                                                                                                                         (= iid (:input-id x)))
-                                                                                                                       
-                                                                                                                       (:inputs inp)))
+                                                                                                   (fn [rst inp]
+                                                                                                     (conj rst 
+                                                                                                           (merge
+                                                                                                            { :input-error (:calculated-error inp) }
+                                                                                                            (first (filter (fn [x]
+                                                                                                                             (= iid (:input-id x)))
+                                                                                                                           (:inputs inp)))
+                                                                                                           )
+                                                                                                     )
                                                                                                    )
-                                                                                                   []
+                                                                                                   '()
                                                                                                    dep-layer
                                                                                                  )
                                                                                                )
                                                                                     ]
-                                                                                  ;;(println iid)
-                                                                                  (println ilist)
-                                                                                )
-                                                                              )
+                                                                                  
+                                                                                  {:calculated-error         ;; 4. multilpy error & weight for each connection, then return the sum 
+                                                                                    (reduce (fn [rst inp]
+                                                                                              (+ rst
+                                                                                                 (* (:input-error inp)
+                                                                                                    (:weight inp))
+                                                                                              )
+                                                                                            )
+                                                                                            0
+                                                                                            ilist)
+                                                                                 }
+                                                                               )
+                                                                         )
                        )
          
          berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error (* (:calculated-value eneuron)
