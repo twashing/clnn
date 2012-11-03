@@ -130,7 +130,7 @@
 (defn update-weights
   "update the weights of the neural net"
   [neuralnet learning-constant]
-
+  
   { :input-layer (layers/traverse-neurons nil
                                           (:input-layer neuralnet)
                                           weight-update-fn)
@@ -155,9 +155,51 @@
 
 (use 'clojure.stacktrace)
 
+(defn train [nnetwork tdata learning-constant target-error]
+  
+  (loop [neural-network nnetwork
+         train-data tdata]
+  
+    (let [next-tick (first train-data)        ;; next tick
+          ff-nn (feed-forward neural-network) ;; feed forward
+          terror (calculate-total-error (:output-layer ff-nn) next-tick) ;; total error
+         ]
+      
+      (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
+      
+      ;; ** CHECK if finished
+      (if (> terror target-error)
+        ff-nn                             ;; return the trained neural-network
+        (recur
+         (update-weights                   ;; apply train algorithm & update weights
+          (propogate-error ff-nn terror)
+          learning-constant)
+         (rest train-data))
+      )
+    )
+  )
+)
+
+(defn kickoff-training []
+
+  (let [init-data (rest (config/load-train-data))
+        next-tick (first init-data)
+        nnetwork (create-neural-network next-tick)
+        tdata (rest init-data)
+       ]
+    (train nnetwork
+           tdata
+           1.5
+           0.1)
+  )
+)
+
 
 (defn thing []
-    
+
+  (kickoff-training)
+
+  
     ;; create neural network 
     (def train-data (config/load-train-data))
     (def first-tick (second train-data))
@@ -185,14 +227,13 @@
     
     (pprint/pprint (:output-layer nn-back))
     (pprint/pprint (:output-layer nn-wupdate))
+    (pprint/pprint nn-wupdate)
     
     ;; train until an acceptable margin of error
     ;; ...
-    
-    
+        
     ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
-    
-    
+        
 )
 
 ;; by default this i) takes the train data and 2) combiner and activation functions on hidden layer
