@@ -6,6 +6,7 @@
             [clojure.pprint :as pprint]
             [clojure.walk :as walk]
             [clojure.zip :as zip]
+            [nn.layers.layers :as layers]
             [nn.layers.input :as ilayer]
             [nn.layers.hidden :as hlayer]
             [nn.layers.output :as olayer]
@@ -114,6 +115,34 @@
   )
 )
 
+(defn weight-update-fn [loc _]
+                             (let [neuron (zip/node loc)
+                                   pderiv (:partial-derivative neuron)]
+                               (merge neuron
+                                      { :inputs 
+                                       (map (fn[ech]
+                                              (merge ech { :weight (* -1 pderiv (:weight ech)) } ) )
+                                            (:inputs neuron))
+                                      }
+                               )
+                             )
+)
+(defn update-weights
+  "update the weights of the neural net"
+  [neuralnet learning-constant]
+
+  { :input-layer (layers/traverse-neurons nil
+                                          (:input-layer neuralnet)
+                                          weight-update-fn)
+    :hidden-layer (layers/traverse-neurons nil
+                                           (:hidden-layer neuralnet)
+                                           weight-update-fn)
+    :output-layer (layers/traverse-neurons nil
+                                           (:output-layer neuralnet)
+                                           weight-update-fn)
+  }
+)
+
 
 
 ;;(pprint/pprint results)
@@ -145,18 +174,20 @@
     (def nn-back (propogate-error nn terror))
     
     
-    ;; adjust weights for input, hidden and output values... 
-    ;; ...
-    
-    ;; train until an acceptable margin of error
-    ;; ...
-    
-    
     (pprint/pprint (:output-layer nn))
     (pprint/pprint nn)
     (pprint/pprint nn-back)
     (pprint/pprint neural-network)
+    
+    
+    ;; adjust weights for input, hidden and output values... 
+    (def nn-wupdate (update-weights nn-back 1.2))
+    
     (pprint/pprint (:output-layer nn-back))
+    (pprint/pprint (:output-layer nn-wupdate))
+    
+    ;; train until an acceptable margin of error
+    ;; ...
     
     
     ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
@@ -171,6 +202,4 @@
 ;; structure > to store previous tick data values
 
 ;; predict bid & ask
-
-
 
