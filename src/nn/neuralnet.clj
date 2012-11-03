@@ -158,7 +158,8 @@
 (defn train [nnetwork tdata learning-constant target-error]
   
   (loop [neural-network nnetwork
-         train-data tdata]
+         train-data tdata
+         count 0]
   
     (let [next-tick (first train-data)        ;; next tick
           ff-nn (feed-forward neural-network) ;; feed forward
@@ -166,15 +167,17 @@
          ]
       
       (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
+      #_(pprint/pprint (:output-layer ff-nn))
       
       ;; ** CHECK if finished
-      (if (> terror target-error)
+      (if (or (< (* -1 terror) target-error) (> count 10))
         ff-nn                             ;; return the trained neural-network
         (recur
          (update-weights                   ;; apply train algorithm & update weights
           (propogate-error ff-nn terror)
           learning-constant)
-         (rest train-data))
+         (rest train-data)
+         (+ count 1))
       )
     )
   )
@@ -189,7 +192,7 @@
        ]
     (train nnetwork
            tdata
-           1.5
+           -0.02
            0.1)
   )
 )
@@ -198,7 +201,7 @@
 (defn thing []
 
   (kickoff-training)
-
+  
   
     ;; create neural network 
     (def train-data (config/load-train-data))
