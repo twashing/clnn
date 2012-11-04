@@ -161,7 +161,18 @@
                                                                                     (:calculated-error eneuron))
                                                          }))
                             cerror-layer)
-         pderiv-layer (map (fn [eneuron] (merge eneuron { :partial-derivative (* (:backpropagated-error eneuron)
+        pderiv-layer (map (fn [eneuron]
+                            (merge eneuron
+                                   { :inputs (map (fn [ech]
+                                                    (merge ech { :partial-derivative (* (:backpropagated-error eneuron)
+                                                                                        (:value ech))
+                                                               } ))
+                                                  (:inputs eneuron))
+                                   }
+                            )
+                          )
+                          berror-layer)
+                     #_(map (fn [eneuron] (merge eneuron { :partial-derivative (* (:backpropagated-error eneuron)
                                                                                   (:calculated-value eneuron))
                                                          }))
                             berror-layer)

@@ -99,7 +99,7 @@
   
   (let [ nno (olayer/calculate-error (:hidden-layer neural-network) (:output-layer neural-network) total-error)
          nnh (hlayer/calculate-error (:input-layer neural-network) (:hidden-layer neural-network) nno)
-         nni nil ;;(ilayer/calculate-error (:input-layer neural-network) nnh)
+         nni (ilayer/calculate-error (:input-layer neural-network) nnh)
        ]
     {
      :input-layer nni
