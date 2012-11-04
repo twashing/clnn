@@ -2,6 +2,7 @@
 
   (:require [incanter.core :as incanter]
             [clojure.zip :as zip]
+            [clojure.pprint :as pprint]
             [nn.layers.layers :as layers]
             [nn.util :as util])
 )
@@ -48,6 +49,11 @@
                                                                     (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
                                                                  dependent-layer)))
                                    wei (:weight (zip/node loc))
+                                   ;;xx (println (str "val[" val "] >
+                                   ;;type[" (type val) "] / wei[" wei
+                                   ;;"] > type[" (type wei) "]"))
+                                   ;;xy (println "-->")
+                                   ;;xx (pprint/pprint (zip/node loc))
                                    calculated (* val wei) ]
                              { :calculated calculated }) )
   )
@@ -144,7 +150,7 @@
                                    }
                             )
                           )
-                          berror-layer)
+                          berror-layer)        
         ]
     pderiv-layer
   )

@@ -110,30 +110,25 @@
 )
 
 (defn weight-update-fn [loc update-constant]
-                             (let [neuron (zip/node loc)
-                                   pderiv (:partial-derivative neuron)]
-                               (merge neuron
-                                      { :inputs 
-                                       (map (fn[ech]
-                                              (merge ech { :weight (* -1 update-constant pderiv) } ) )
-                                            (:inputs neuron))
-                                      }
-                               )
+                             (let [edge-weight (zip/node loc)
+                                   pderiv (:partial-derivative edge-weight)]
+                               (merge edge-weight
+                                      { :weight (* -1 update-constant pderiv) } )
                              )
 )
 (defn update-weights
   "update the weights of the neural net"
   [neuralnet learning-constant]
   
-  { :input-layer (layers/traverse-neurons learning-constant
-                                          (:input-layer neuralnet)
-                                          weight-update-fn)
-    :hidden-layer (layers/traverse-neurons learning-constant
-                                           (:hidden-layer neuralnet)
-                                           weight-update-fn)
-    :output-layer (layers/traverse-neurons learning-constant
-                                           (:output-layer neuralnet)
-                                           weight-update-fn)
+  { :input-layer (layers/traverse-neural-layer learning-constant
+                                               (:input-layer neuralnet)
+                                               weight-update-fn)
+    :hidden-layer (layers/traverse-neural-layer learning-constant
+                                                (:hidden-layer neuralnet)
+                                                weight-update-fn)
+    :output-layer (layers/traverse-neural-layer learning-constant
+                                                (:output-layer neuralnet)
+                                                weight-update-fn)
   }
 )
 
