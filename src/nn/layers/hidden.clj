@@ -91,7 +91,7 @@
 )
 (defn calculate-error
   "neural-layer is the layer under calculation. error-layer is the previous layer from where we are backpropagating the error value"
-  [neural-layer error-layer]
+  [input-layer neural-layer error-layer]
   
   (let [ ;; for each neuron, find the 'input' in the error layer and multiply this weight by elayer's error value
          ;; calculated-error = weight * error + ...
@@ -134,11 +134,17 @@
                                                                                     (:calculated-error eneuron))
                                                          }))
                             cerror-layer)
-         pderiv-layer (map (fn [eneuron] (merge eneuron { :partial-derivative (* (:backpropagated-error eneuron)
-                                                                                  (:calculated-value eneuron))
-                                                         }))
-                            berror-layer)
-        
+        pderiv-layer (map (fn [eneuron]
+                            (merge eneuron
+                                   { :inputs (map (fn [ech]
+                                                    (merge ech { :partial-derivative (* (:backpropagated-error eneuron)
+                                                                                        (:calculated-value (first (filter #(= (:id %1) (:input-id ech)) input-layer))))
+                                                               }))
+                                                  (:inputs eneuron))
+                                   }
+                            )
+                          )
+                          berror-layer)
         ]
     pderiv-layer
   )

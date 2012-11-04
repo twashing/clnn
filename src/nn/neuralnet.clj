@@ -98,7 +98,7 @@
   [neural-network total-error]
   
   (let [ nno (olayer/calculate-error (:hidden-layer neural-network) (:output-layer neural-network) total-error)
-         nnh nil ;;(hlayer/calculate-error (:input-layer neural-network) (:hidden-layer neural-network) nno)
+         nnh (hlayer/calculate-error (:input-layer neural-network) (:hidden-layer neural-network) nno)
          nni nil ;;(ilayer/calculate-error (:input-layer neural-network) nnh)
        ]
     {
@@ -154,7 +154,6 @@
          ]
       
       (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
-      #_(pprint/pprint (:output-layer ff-nn))
       
       ;; ** CHECK if finished
       (if (or (< (* -1 terror) target-error) (> count 10))
