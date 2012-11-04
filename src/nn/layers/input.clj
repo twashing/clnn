@@ -131,7 +131,7 @@
                                                                                                    (fn [rst inp]
                                                                                                      (conj rst 
                                                                                                            (merge
-                                                                                                            { :input-error (:calculated-error inp) }
+                                                                                                            { :input-error (:backpropagated-error inp) }
                                                                                                             (first (filter (fn [x]
                                                                                                                              (= iid (:input-id x)))
                                                                                                                            (:inputs inp)))
@@ -148,9 +148,7 @@
                                                                                     (reduce (fn [rst inp]
                                                                                               (+ rst
                                                                                                  (* (:input-error inp)
-                                                                                                    (:weight inp))
-                                                                                              )
-                                                                                            )
+                                                                                                    (:weight inp)) ) )
                                                                                             0
                                                                                             ilist)
                                                                                  }

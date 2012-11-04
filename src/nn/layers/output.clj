@@ -81,7 +81,7 @@
                                              0 
                                              (:inputs ech-map))})
 )
-(defn calculate-error [neural-layer total-error]
+(defn calculate-error [input-layer neural-layer total-error]
   
   ;; take :calculated-error A)
   ;; backpropagated error   B) is:                  :calculated-value * ( 1 - :calculated-value ) * A)
@@ -96,14 +96,26 @@
          cerror-layer (map (fn [eneuron] (merge eneuron { :calculated-error total-error }) ) neural-layer)
          berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error (* (:calculated-value eneuron)
                                                                                    (- 1 (:calculated-value eneuron))
-                                                                                   (:calculated-error eneuron))
+                                                                                   (- (:calculated-value eneuron) total-error)
+                                                                                   )
                                                         }))
                            cerror-layer)
         
-         pderiv-layer (map (fn [eneuron] (merge eneuron { :partial-derivative (* (:backpropagated-error eneuron)
-                                                                                 (:calculated-value eneuron))
-                                                        }))
-                           berror-layer)
+        pderiv-layer (map (fn [eneuron]
+                            (merge eneuron
+                                   { :inputs (map (fn [ech]
+                                                    (merge ech { :partial-derivative (* (:backpropagated-error eneuron)
+                                                                                        (:calculated-value (first (filter #(= (:id %1) (:input-id ech)) input-layer))))
+                                                               }))
+                                                  (:inputs eneuron))
+                                   }
+                            )
+                            #_(merge eneuron { :partial-derivative (* (:backpropagated-error eneuron)
+                                                                                 ;;(:calculated-value eneuron)
+                                                                                 (first (filter #(= (:id %1) ) input-layer)))
+                                              } )
+                          )
+                          berror-layer)
        ]
     pderiv-layer
   )

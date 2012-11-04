@@ -104,7 +104,7 @@
                                                                                                    (fn [rst inp]
                                                                                                      (conj rst 
                                                                                                            (merge
-                                                                                                            { :input-error (:calculated-error inp) }
+                                                                                                            { :input-error (:backpropagated-error inp) }
                                                                                                             (first (filter (fn [x]
                                                                                                                              (= iid (:input-id x)))
                                                                                                                            (:inputs inp)))
@@ -121,9 +121,7 @@
                                                                                     (reduce (fn [rst inp]
                                                                                               (+ rst
                                                                                                  (* (:input-error inp)
-                                                                                                    (:weight inp))
-                                                                                              )
-                                                                                            )
+                                                                                                    (:weight inp)) ) )
                                                                                             0
                                                                                             ilist)
                                                                                  }
@@ -131,7 +129,7 @@
                                                                          )
                        )
          
-         berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error (* (:calculated-value eneuron)
+         berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error  (* (:calculated-value eneuron)
                                                                                     (- 1 (:calculated-value eneuron))
                                                                                     (:calculated-error eneuron))
                                                          }))

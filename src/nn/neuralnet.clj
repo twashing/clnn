@@ -52,12 +52,6 @@
 )
 
 
-;; --- propogation 
-(defn update-weights []  
-  ;; ...
-)
-
-
 (defn create-neural-network [single-tick-data]
   
   (let [
@@ -103,9 +97,9 @@
   "Propagate error back through the neural network"
   [neural-network total-error]
   
-  (let [ nno (olayer/calculate-error (:output-layer neural-network) total-error)
-         nnh (hlayer/calculate-error (:hidden-layer neural-network) nno)
-         nni (ilayer/calculate-error (:input-layer neural-network) nnh)
+  (let [ nno (olayer/calculate-error (:hidden-layer neural-network) (:output-layer neural-network) total-error)
+         nnh nil ;;(hlayer/calculate-error (:input-layer neural-network) (:hidden-layer neural-network) nno)
+         nni nil ;;(ilayer/calculate-error (:input-layer neural-network) nnh)
        ]
     {
      :input-layer nni
@@ -115,13 +109,13 @@
   )
 )
 
-(defn weight-update-fn [loc _]
+(defn weight-update-fn [loc update-constant]
                              (let [neuron (zip/node loc)
                                    pderiv (:partial-derivative neuron)]
                                (merge neuron
                                       { :inputs 
                                        (map (fn[ech]
-                                              (merge ech { :weight (* -1 pderiv (:weight ech)) } ) )
+                                              (merge ech { :weight (* -1 update-constant pderiv) } ) )
                                             (:inputs neuron))
                                       }
                                )
@@ -131,25 +125,18 @@
   "update the weights of the neural net"
   [neuralnet learning-constant]
   
-  { :input-layer (layers/traverse-neurons nil
+  { :input-layer (layers/traverse-neurons learning-constant
                                           (:input-layer neuralnet)
                                           weight-update-fn)
-    :hidden-layer (layers/traverse-neurons nil
+    :hidden-layer (layers/traverse-neurons learning-constant
                                            (:hidden-layer neuralnet)
                                            weight-update-fn)
-    :output-layer (layers/traverse-neurons nil
+    :output-layer (layers/traverse-neurons learning-constant
                                            (:output-layer neuralnet)
                                            weight-update-fn)
   }
 )
 
-
-
-;;(pprint/pprint results)
-
-;; apply total error to weight in each neuron -> going backwards through neuralnet 
-
-;; apply weight change using ... partial derivative of the weighted error... -> going forwards through the neuralnet
 
 
 
@@ -192,14 +179,14 @@
        ]
     (train nnetwork
            tdata
-           -0.02
+           0.5
            0.1)
   )
 )
 
 
 (defn thing []
-
+  
   (kickoff-training)
   
   
@@ -234,16 +221,8 @@
     
     ;; train until an acceptable margin of error
     ;; ...
-        
+    
     ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
-        
+    
 )
-
-;; by default this i) takes the train data and 2) combiner and activation functions on hidden layer
-
-;; function > predict bid (1 iteration based on a single piece of tick data)
-
-;; structure > to store previous tick data values
-
-;; predict bid & ask
 
