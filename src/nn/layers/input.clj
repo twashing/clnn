@@ -88,34 +88,6 @@
 
 
 ;; CALCULATE ERROR
-#_(defn calculate-leaf-error [neural-layer total-error]
-  
-  (loop [loc (layers/create-zipper neural-layer)]
-    
-    (if (zip/end? loc)
-      (zip/root loc)
-      (if (and  (-> loc zip/node map?) 
-                (-> loc zip/node (contains?   :key)))
-        (recur  (zip/next
-                  (zip/edit loc merge
-                    
-                    (let  [ wei (:weight (zip/node loc))
-                            error (* wei total-error) ]
-                      { :error error })
-                  ))) 
-        (recur (zip/next loc))
-      )
-    ) 
-  )
-)
-#_(defn calculate-final-error [ech-map]
-  (merge ech-map { :calculated-error (reduce (fn [rst nxt] (+ rst (:error nxt))) 
-                                             0 
-                                             (:inputs ech-map))})
-)
-#_(defn calculate-error [neural-layer total-error]
-  (map calculate-final-error (calculate-leaf-error neural-layer total-error))
-)
 (defn calculate-error
   "neural-layer is the layer under calculation. error-layer is the previous layer from where we are backpropagating the error value"
   [neural-layer error-layer]
@@ -157,8 +129,8 @@
                        )
          
          berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error (* (:calculated-value eneuron)
-                                                                                    (- 1 (:calculated-value eneuron))
-                                                                                    (:calculated-error eneuron))
+                                                                                   ;;(- 1 (:calculated-value eneuron))
+                                                                                   (:calculated-error eneuron))
                                                          }))
                             cerror-layer)
         pderiv-layer (map (fn [eneuron]

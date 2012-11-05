@@ -49,20 +49,8 @@
                                                                     (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
                                                                  dependent-layer)))
                                    wei (:weight (zip/node loc))
-                                   ;;xx (println (str "val[" val "] >
-                                   ;;type[" (type val) "] / wei[" wei
-                                   ;;"] > type[" (type wei) "]"))
-                                   ;;xy (println "-->")
-                                   ;;xx (pprint/pprint (zip/node loc))
                                    calculated (* val wei) ]
                              { :calculated calculated }) )
-  )
-)
-#_(defn calculate-final-value [ech-map]
-  (merge ech-map  { :calculated-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
-                                              0 
-                                              (:inputs ech-map))
-                  }
   )
 )
 (defn calculate-final-value [ech-map]
@@ -79,22 +67,6 @@
 
 
 ;; CALCULATE ERRORS
-#_(defn calculate-leaf-error [neural-layer total-error]
-  
-  (layers/traverse-neural-layer nil neural-layer    ;; pass in i) no dependent layer and ii) the output layer
-                         (fn [loc _]         ;; pass in the edit fn
-                           
-                           (let  [ wei (:weight (zip/node loc))
-                                   error (* wei total-error) ]
-                             { :error error })
-                         )
-  )
-)
-#_(defn calculate-calculated-error [ech-map]
-  (merge ech-map { :calculated-error (reduce (fn [rst nxt] (+ rst (:error nxt))) 
-                                             0 
-                                             (:inputs ech-map))})
-)
 (defn calculate-error
   "neural-layer is the layer under calculation. error-layer is the previous layer from where we are backpropagating the error value"
   [input-layer neural-layer error-layer]
@@ -136,7 +108,7 @@
                        )
          
          berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error  (* (:calculated-value eneuron)
-                                                                                    (- 1 (:calculated-value eneuron))
+                                                                                    ;;(- 1 (:calculated-value eneuron))
                                                                                     (:calculated-error eneuron))
                                                          }))
                             cerror-layer)
@@ -156,16 +128,10 @@
   )
 )
 
-
-
-
-
-
 ;; Linear Combiner & Activation FUNCTIONS
 (defn linear-combiner
   [neuron]
   
-  ;;(println (str "linear-combiner function CALLED > " (-> neuron :inputs)))
   (reduce (fn [rlt ech]
             (+ rlt (+ (* (:value ech)
                          (:weight ech))
@@ -179,7 +145,7 @@
   "Neuron fires iff X1W1 + X2W2 + X3W3 + ... > T"
   [value]
   
-  (/ 1 (+ 1 (incanter/exp (* -1 value))))
+  (/ 1 (+ 1 (incanter/exp (* -2 value))))
 )
 
 (defn apply-combiner-activation [hidden-layer]

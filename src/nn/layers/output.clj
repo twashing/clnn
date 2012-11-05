@@ -36,18 +36,11 @@
                          (fn [loc hlayer]             ;; pass in the edit fn
                            
                            (let  [ val (:calculated-value (first (filter (fn [ech]
-                                                                           (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
+                                                                          (= (:id ech) (:input-id (zip/node loc))) )  ;; lookup value based on input-id (:value (zip/node loc))
                                                                  hlayer)))
                                    wei (:weight (zip/node loc))
                                    calculated (* val wei) ]
                              { :calculated calculated }))
-  )
-)
-#_(defn calculate-final-value [ech-map]
-  (merge ech-map  { :calculated-value (reduce (fn [rst nxt] (+ rst (:calculated nxt))) 
-                                               0 
-                                               (:inputs ech-map))
-                  }
   )
 )
 (defn calculate-final-value [ech-map]
@@ -93,7 +86,7 @@
   ;; for hidden layer... pass in input error from connecting neuron (do not use "total error")
   (let [ cerror-layer (map (fn [eneuron] (merge eneuron { :calculated-error total-error }) ) neural-layer)
          berror-layer (map (fn [eneuron] (merge eneuron { :backpropagated-error (* (:calculated-value eneuron)
-                                                                                   (- 1 (:calculated-value eneuron))
+                                                                                   ;;(- 1 (:calculated-value eneuron))
                                                                                    (- (:calculated-value eneuron) total-error)
                                                                                    )
                                                         }))

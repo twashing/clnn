@@ -173,7 +173,7 @@
        ]
     (train nnetwork
            tdata
-           0.5
+           1.2
            0.1)
   )
 )
@@ -181,7 +181,8 @@
 
 (defn thing []
   
-  (kickoff-training)
+  (def nn2 (kickoff-training))
+  (pprint/pprint nn2)
   
   
     ;; create neural network 
