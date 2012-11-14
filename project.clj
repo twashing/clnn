@@ -4,9 +4,9 @@
                  [clojure-csv/clojure-csv "2.0.0-alpha1"]
                  [clj-time "0.4.3"]
                  [incanter "1.3.0"]
-                 
-                 [org.encog/encog-core "3.1.0"]   ;; official encog 3.1 release
-                 [clojure-encog "0.4.1-SNAPSHOT"]
+                 [org.clojure/math.numeric-tower "0.0.1"]
+                 ;;[org.encog/encog-core "3.1.0"]   ;; official encog 3.1 release
+                 ;;[clojure-encog "0.4.1-SNAPSHOT"]
                  [ritz/ritz-nrepl "0.5.0"]
                 ]
   :repl-options {:nrepl-middleware [ritz.nrepl.middleware.javadoc/wrap-javadoc]}

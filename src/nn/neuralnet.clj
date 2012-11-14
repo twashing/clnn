@@ -3,6 +3,7 @@
             [clj-time.format :as cformat]
             [clj-time.coerce :as ccoerce]
             [incanter.core :as incanter]
+            [clojure.math.numeric-tower :as mtower]
             [clojure.pprint :as pprint]
             [clojure.walk :as walk]
             [clojure.zip :as zip]
@@ -151,7 +152,7 @@
       (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
       
       ;; ** CHECK if finished
-      (if (or (< (* -1 terror) target-error) (> count 50))
+      (if (or (< (mtower/abs terror) target-error) (> count 50))
         ff-nn                             ;; return the trained neural-network
         (recur
          (update-weights                   ;; apply train algorithm & update weights
@@ -174,7 +175,7 @@
     (train nnetwork
            tdata
            0.2
-           0.1)
+           0.05)
   )
 )
 

@@ -11,8 +11,7 @@
 (defn create-output-neuron [hidden-layer]
   { :inputs (reduce #(conj  %1 
                             { :input-id (:id %2) 
-                              :weight (rand) 
-                              :bias 0 } ) 
+                              :weight (rand) } ) 
                     '() 
                     hidden-layer)
     :id (util/generate-id)
@@ -44,7 +43,7 @@
   )
 )
 (defn calculate-final-value [ech-map]
-  (merge ech-map  { :calculated-value (-> ech-map layers/calculate-linear-combiner layers/calculate-activation)
+  (merge ech-map  { :calculated-value (+ 1 (-> ech-map layers/calculate-linear-combiner layers/calculate-activation))
                   }
   )
 )
