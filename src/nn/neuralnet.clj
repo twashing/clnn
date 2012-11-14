@@ -151,7 +151,7 @@
       (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
       
       ;; ** CHECK if finished
-      (if (or (< (* -1 terror) target-error) (> count 10))
+      (if (or (< (* -1 terror) target-error) (> count 50))
         ff-nn                             ;; return the trained neural-network
         (recur
          (update-weights                   ;; apply train algorithm & update weights
@@ -173,7 +173,7 @@
        ]
     (train nnetwork
            tdata
-           1.2
+           0.2
            0.1)
   )
 )
@@ -181,8 +181,8 @@
 
 (defn thing []
   
-  (def nn2 (kickoff-training))
-  (pprint/pprint nn2)
+    (def nn2 (kickoff-training))
+    (pprint/pprint nn2)
   
   
     ;; create neural network 

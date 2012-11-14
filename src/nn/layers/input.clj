@@ -19,14 +19,34 @@
 (defn get-time-format []
   (cformat/formatter "dd.MM.yyy HH:mm:ss.SSS")
 )
-(defn create-input-neuron [inputs]
+
+(defn create-input-neuron [input-map]
+  
+  (merge input-map { :id (util/generate-id) })
+)
+(defn create-input-layer
+  "Creating a neuron for each input value"
+  [inputs]
+
+  (let [input-layer '()
+        tformat (get-time-format)
+       ]
+    [ (create-input-neuron { :key :time :value (->> (first inputs) (cformat/parse tformat) ccoerce/to-long double (normalize-data 1000000000000) ) } )
+      (create-input-neuron { :key :bid :value (-> (second inputs) Double/parseDouble ) } )
+      (create-input-neuron { :key :ask :value (-> (nth inputs 2) Double/parseDouble ) } )
+      (create-input-neuron { :key :bvolume :value (->> (nth inputs 3) Double/parseDouble (normalize-data 1000000) ) } )
+      (create-input-neuron { :key :avolume :value (->> (nth inputs 4) Double/parseDouble (normalize-data 1000000) ) } )
+    ]
+  )
+)
+
+#_(defn create-input-neuron [inputs]
   
   {:inputs (reduce #(conj %1 { :key (:key %2) :value (:value %2) :weight (rand) :bias 0 }) '() inputs)
    :id (util/generate-id)
   }
 )
-
-(defn create-input-layer
+#_(defn create-input-layer
   "Creating a neuron for each input value"
   [inputs]
 
