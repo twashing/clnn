@@ -49,7 +49,7 @@
          (let  [val (:value ech)
                 wei (:weight ech)
                 calculated (* val wei) ]
-           (merge ech { :calculated-value val })))
+           (merge ech { :calculated-value calculated })))
        neural-layer
   )
 )
