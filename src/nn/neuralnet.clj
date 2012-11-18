@@ -134,8 +134,6 @@
 )
 
 
-
-
 (use 'clojure.stacktrace)
 
 (defn train [nnetwork tdata learning-constant target-error]
@@ -152,7 +150,7 @@
       (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
       
       ;; ** CHECK if finished
-      (if (or (< (mtower/abs terror) target-error) (> count 5000))
+      (if (or (< (mtower/abs terror) target-error) (> count 10000))
         ff-nn                             ;; return the trained neural-network
         (recur
          (update-weights                   ;; apply train algorithm & update weights
@@ -165,6 +163,7 @@
   )
 )
 
+
 (defn kickoff-training []
 
   (let [init-data (rest (config/load-train-data))
@@ -174,7 +173,7 @@
        ]
     (train nnetwork
            tdata
-           0.2
+           0.06
            0.05)
   )
 )
