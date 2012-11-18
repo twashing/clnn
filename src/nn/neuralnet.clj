@@ -150,7 +150,7 @@
       (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
       
       ;; ** CHECK if finished
-      (if (or (< (mtower/abs terror) target-error) (> count 10000))
+      (if (or (< (mtower/abs terror) target-error) (> count 100))
         ff-nn                             ;; return the trained neural-network
         (recur
          (update-weights                   ;; apply train algorithm & update weights
@@ -161,10 +161,13 @@
       )
     )
   )
+  
+  (println "END")
+  (println)
 )
 
 
-(defn kickoff-training []
+(defn kickoff-training [learning-constant target-error]
 
   (let [init-data (rest (config/load-train-data))
         next-tick (first init-data)
@@ -173,15 +176,15 @@
        ]
     (train nnetwork
            tdata
-           0.06
-           0.05)
+           learning-constant
+           target-error)
   )
 )
 
 
 (defn thing []
   
-    (def nn2 (kickoff-training))
+    (def nn2 (kickoff-training 0.02 0.02))
     (pprint/pprint nn2)
   
   
