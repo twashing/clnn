@@ -17,41 +17,6 @@
 )
 
 
-;; --- testing 
-(defn test-hidden-layer[]
-
-  (let [train-data (config/load-train-data)
-        input-layer (ilayer/create-input-layer (second train-data))
-        hidden-layer (hlayer/create-hidden-layer input-layer)]
-    
-    (pprint/pprint "Input Layer:")
-    (pprint/pprint input-layer)
-    
-    (pprint/pprint "Hidden Layer:")
-    (pprint/pprint hidden-layer)
-    
-    ;; apply linear combiner and add the bias to get a value
-    (let [hidden-updated (hlayer/apply-combiner-activation hidden-layer)]
-      
-      (println "Hidden Layer , Combined and Activated:")
-      (pprint/pprint hidden-updated)
-    )
-  )
-)
-
-(defn test-output-layer[]
-
-  (let [train-data (config/load-train-data)
-        input-layer (ilayer/create-input-layer (second train-data))
-        hidden-layer (hlayer/create-hidden-layer input-layer)
-        hidden-updated (hlayer/apply-combiner-activation hidden-layer)
-        output-layer (olayer/create-output-layer hidden-updated)
-       ]
-    (pprint/pprint "Output Layer:")
-    (pprint/pprint output-layer)
-  )
-)
-
 
 (defn create-neural-network [single-tick-data]
   
