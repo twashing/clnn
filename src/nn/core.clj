@@ -1,16 +1,11 @@
 (ns nn.core
-  
+
   (:require [clojure.pprint :as pprint]
-            [clojure-csv.core :as csv]
-            [clojure.java.io :as io]
-  )
-  
-)
+    [clojure-csv.core :as csv]
+    [clojure.java.io :as io]))
 
 (defn next-tick [data-seq]
-  (first data-seq)
-)
-
+  (first data-seq))
 
 ;; create neuron protocol (using jodatime)
 

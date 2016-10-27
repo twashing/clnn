@@ -1,60 +1,42 @@
 (ns nn.test.core
   (:use [clojure.test]
-        [midje.sweet]
-  )
+    [midje.sweet])
   (:require [nn.core :as nn]
-            [nn.config.config :as config]
-            [nn.neuralnet :as neuralnet]
-            [clj-time.format :as cformat]
-            [clojure.pprint :as pprint]
-  )
-)
-
-
+    [nn.config.config :as config]
+    [nn.neuralnet :as neuralnet]
+    [clj-time.format :as cformat]
+    [clojure.pprint :as pprint]))
 
 (fact "load config training file; ensure first tickis as expected"
-  (-> (config/load-train-data) nil? not) => true
-)
-
+  (-> (config/load-train-data) nil? not) => true)
 
 (fact "we can get the next tick"
   (let [train-data (config/load-train-data)
         next-tick (nn/next-tick train-data)]
-    (-> next-tick nil? not) => true
-    
-  )
-)
-
+    (-> next-tick nil? not) => true))
 
 (fact "create input layer"
   (let [train-data (config/load-train-data)
-        input-layer (neuralnet/create-input-layer (second train-data))
-       ]
+        input-layer (neuralnet/create-input-layer (second train-data))]
     ;;(pprint/pprint input-layer)
     (-> input-layer nil? not) => true
-    (-> input-layer empty? not) => true
-  )
-)
-
+    (-> input-layer empty? not) => true))
 
 ; (neuralnet/linear-combiner neuron) => 1.2023149806101477E12
 (def neuron {:time (cformat/parse (neuralnet/get-time-format) "01.05.2012 20:00:00.676")
-                    :bid 1.32379,
-                    :ask 1.32390,
-                    :bvolume 2250000.00,
-                    :avolume 3000000.00,
-                    :threshold 0.76,
-                    :weights {:time 0.90,
-                              :bid 0.68,
-                              :ask 0.64,
-                              :bvolume 0.48,
-                              :avolume 0.58}}
-)
-
+             :bid 1.32379,
+             :ask 1.32390,
+             :bvolume 2250000.00,
+             :avolume 3000000.00,
+             :threshold 0.76,
+             :weights {:time 0.90,
+                       :bid 0.68,
+                       :ask 0.64,
+                       :bvolume 0.48,
+                       :avolume 0.58}})
 
 #_(fact "test the activation (sigmoid) function"
-  (neuralnet/activation neuron) => 1.0
-)
+    (neuralnet/activation neuron) => 1.0)
 
 (fact "create hidden layer"
   (let [train-data (config/load-train-data)
@@ -62,9 +44,7 @@
         hidden-layer (neuralnet/create-hidden-layer input-layer)]
     (println "Showing Hidden Layer")
     (pprint/pprint hidden-layer)
-    1 => 1
-  )
-)
+    1 => 1))
 
 ;; (neuralnet/linear-combiner neuron) => 1.2023149806101477E12
 ;; Mappins over a structure that looks like this: 
@@ -99,21 +79,18 @@
         :avolume 3000000.00 * 0.58 => 1740000
 
         FINAL => 1202314980610.1474732 (1'202'314'980'610.1474732)"
-  
+
   (let [train-data (config/load-train-data)
         input-layer (neuralnet/create-input-layer (second train-data))
         hidden-layer (neuralnet/create-hidden-layer input-layer)]
-    
+
     ;(println (str "Fuuuuck: " (type hidden-layer)))
     ;(map #(neuralnet/linear-combiner %1) hidden-layer)
 
     ;; apply linear combiner and add the bias to get a value
     (let [value (+ (neuralnet/linear-combiner (first hidden-layer))
-                   (:bias (first hidden-layer)))]
+                  (:bias (first hidden-layer)))]
       (println (str "Hidden Neuron value: " value))
-      (println (str "Hidden Neuron activation-value: " (neuralnet/activation value)))
-    )
-    1 => 1
-  )
-)
+      (println (str "Hidden Neuron activation-value: " (neuralnet/activation value))))
+    1 => 1))
 ; create output layer
