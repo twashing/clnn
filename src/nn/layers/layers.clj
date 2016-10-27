@@ -32,7 +32,8 @@
   (/ 1 (+ 1 (incanter/exp (* -1 value)))))
 
 (defn calculate-linear-combiner [ech-map]
-  (reduce (fn [rst nxt] (+ rst (:calculated nxt)))
+  (reduce (fn [rst nxt]
+            (+ rst (:calculated nxt)))
     0
     (:inputs ech-map)))
 

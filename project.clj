@@ -5,14 +5,12 @@
                  [clj-time "0.12.0"]
                  [incanter "1.9.1"]
                  [org.clojure/math.numeric-tower "0.0.4"]
-                 ;;[org.encog/encog-core "3.1.0"]   ;; official encog 3.1 release
-                 ;;[clojure-encog "0.4.1-SNAPSHOT"]
-                 
-                 ]
-  :dev-dependencies [[midje "1.4.0"]
-                     [lein-midje "1.0.10"]
-                     [com.stuartsierra/lazytest "1.2.3"]]
-  :repositories {"stuart" "http://stuartsierra.com/maven2"}
+                 #_[org.encog/encog-core "3.1.0"]   ;; official encog 3.1 release
+                 #_[clojure-encog "0.4.1-SNAPSHOT"]]
+
+  :profiles {:dev {:dependencies [[midje "1.8.3"]
+                                  [lazytest "1.2.3"]]
+                   :plugins [[lein-midje "3.2.1"]]}}
 
   :resources-path ".:src/:test/:etc/:etc/data/"
 

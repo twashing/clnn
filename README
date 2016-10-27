@@ -3,3 +3,39 @@
 Copyright (C) 2012 Interrupt Software Inc.
 
 Distributed under the Eclipse Public License, the same as Clojure.
+
+
+`(neuralnet/linear-combiner neuron) => 1.2023149806101477E12`
+
+Mappins over a structure that looks like this: 
+
+```
+  ({:value 0,
+    :inputs
+    ({:key :time,
+      :value #<DateTime 2012-05-01T20:00:00.676Z>,
+      :weight 0.9786325134073216}
+     {:key :bid, :value 1.3239, :weight 0.7434304227558287}
+     {:key :ask, :value 1.32379, :weight 0.036252329293422814}
+     {:key :bvolume, :value 3000000.0, :weight 0.16789324929217841}
+     {:key :avolume, :value 2250000.0, :weight 0.3949611182169088}),
+    :bias 0}
+   {:value 0,
+    :inputs
+    ({:key :time,
+      :value #<DateTime 2012-05-01T20:00:00.676Z>,
+      :weight 0.7499745264193644}
+     {:key :bid, :value 1.3239, :weight 0.38740015054351007}
+     {:key :ask, :value 1.32379, :weight 0.5116469308587626}
+     {:key :bvolume, :value 3000000.0, :weight 0.6246752150489426}
+     {:key :avolume, :value 2250000.0, :weight 0.35806585014437686}),
+    :bias 0})
+```
+
+;; (println (str "Fuuuuck: " (type hidden-layer)))
+;; (map #(neuralnet/linear-combiner %1) hidden-layer)
+
+;; apply linear combiner and add the bias to get a value
+
+;; create output layer
+

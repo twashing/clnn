@@ -1,11 +1,13 @@
 (ns nn.test.core
   (:use [clojure.test]
-    [midje.sweet])
+        [midje.sweet])
   (:require [nn.core :as nn]
-    [nn.config.config :as config]
-    [nn.neuralnet :as neuralnet]
-    [clj-time.format :as cformat]
-    [clojure.pprint :as pprint]))
+            [nn.config.config :as config]
+            [nn.neuralnet :as neuralnet]
+            [nn.layers.input :as ilayer]
+            [nn.layers.hidden :as hlayer]
+            [clj-time.format :as cformat]
+            [clojure.pprint :as pprint]))
 
 (fact "load config training file; ensure first tickis as expected"
   (-> (config/load-train-data) nil? not) => true)
@@ -17,13 +19,13 @@
 
 (fact "create input layer"
   (let [train-data (config/load-train-data)
-        input-layer (neuralnet/create-input-layer (second train-data))]
+        input-layer (ilayer/create-input-layer (second train-data))]
     ;;(pprint/pprint input-layer)
     (-> input-layer nil? not) => true
     (-> input-layer empty? not) => true))
 
 ; (neuralnet/linear-combiner neuron) => 1.2023149806101477E12
-(def neuron {:time (cformat/parse (neuralnet/get-time-format) "01.05.2012 20:00:00.676")
+(def neuron {:time (cformat/parse (ilayer/get-time-format) "01.05.2012 20:00:00.676")
              :bid 1.32379,
              :ask 1.32390,
              :bvolume 2250000.00,
@@ -40,35 +42,13 @@
 
 (fact "create hidden layer"
   (let [train-data (config/load-train-data)
-        input-layer (neuralnet/create-input-layer (second train-data))
-        hidden-layer (neuralnet/create-hidden-layer input-layer)]
+        input-layer (ilayer/create-input-layer (second train-data))
+        hidden-layer (hlayer/create-hidden-layer input-layer)]
+
     (println "Showing Hidden Layer")
     (pprint/pprint hidden-layer)
-    1 => 1))
 
-;; (neuralnet/linear-combiner neuron) => 1.2023149806101477E12
-;; Mappins over a structure that looks like this: 
-;; 
-;;   ({:value 0,
-;;     :inputs
-;;     ({:key :time,
-;;       :value #<DateTime 2012-05-01T20:00:00.676Z>,
-;;       :weight 0.9786325134073216}
-;;      {:key :bid, :value 1.3239, :weight 0.7434304227558287}
-;;      {:key :ask, :value 1.32379, :weight 0.036252329293422814}
-;;      {:key :bvolume, :value 3000000.0, :weight 0.16789324929217841}
-;;      {:key :avolume, :value 2250000.0, :weight 0.3949611182169088}),
-;;     :bias 0}
-;;    {:value 0,
-;;     :inputs
-;;     ({:key :time,
-;;       :value #<DateTime 2012-05-01T20:00:00.676Z>,
-;;       :weight 0.7499745264193644}
-;;      {:key :bid, :value 1.3239, :weight 0.38740015054351007}
-;;      {:key :ask, :value 1.32379, :weight 0.5116469308587626}
-;;      {:key :bvolume, :value 3000000.0, :weight 0.6246752150489426}
-;;      {:key :avolume, :value 2250000.0, :weight 0.35806585014437686}),
-;;     :bias 0}) 
+    1 => 1))
 
 (fact "test the linear combiner function; I expect to see these output values
         
@@ -80,17 +60,17 @@
 
         FINAL => 1202314980610.1474732 (1'202'314'980'610.1474732)"
 
-  (let [train-data (config/load-train-data)
-        input-layer (neuralnet/create-input-layer (second train-data))
-        hidden-layer (neuralnet/create-hidden-layer input-layer)]
+  (let [train-data #spy/d (config/load-train-data)
+        input-layer (ilayer/create-input-layer (second train-data))
+        hidden-layer (hlayer/create-hidden-layer input-layer)]
 
-    ;(println (str "Fuuuuck: " (type hidden-layer)))
-    ;(map #(neuralnet/linear-combiner %1) hidden-layer)
-
-    ;; apply linear combiner and add the bias to get a value
-    (let [value (+ (neuralnet/linear-combiner (first hidden-layer))
+    (let [value (+ (hlayer/linear-combiner (first hidden-layer))
                   (:bias (first hidden-layer)))]
+
       (println (str "Hidden Neuron value: " value))
-      (println (str "Hidden Neuron activation-value: " (neuralnet/activation value))))
-    1 => 1))
-; create output layer
+      (println (str "Hidden Neuron activation-value: " (hlayer/activation value))))
+    
+    (= 1 1) => true
+
+    ))
+

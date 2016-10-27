@@ -34,8 +34,10 @@
              wei (:weight (zip/node loc))
              calculated (* val wei)]
         {:calculated calculated}))))
+
 (defn calculate-final-value [ech-map]
   (merge ech-map  {:calculated-value (+ 1 (-> ech-map layers/calculate-linear-combiner layers/calculate-activation))}))
+
 (defn calculate-value [hidden-layer neural-layer]
 
   ;; first calculate leaf values, then map calculated-values over the result list

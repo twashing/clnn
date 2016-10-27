@@ -1,18 +1,18 @@
 (ns nn.neuralnet
   (:require [clj-time.core :as ctime]
-    [clj-time.format :as cformat]
-    [clj-time.coerce :as ccoerce]
-    [incanter.core :as incanter]
-    [clojure.math.numeric-tower :as mtower]
-    [clojure.pprint :as pprint]
-    [clojure.walk :as walk]
-    [clojure.zip :as zip]
-    [nn.layers.layers :as layers]
-    [nn.layers.input :as ilayer]
-    [nn.layers.hidden :as hlayer]
-    [nn.layers.output :as olayer]
-    [nn.config.config :as config]
-    [nn.util :as util]))
+            [clj-time.format :as cformat]
+            [clj-time.coerce :as ccoerce]
+            [incanter.core :as incanter]
+            [clojure.math.numeric-tower :as mtower]
+            [clojure.pprint :as pprint]
+            [clojure.walk :as walk]
+            [clojure.zip :as zip]
+            [nn.layers.layers :as layers]
+            [nn.layers.input :as ilayer]
+            [nn.layers.hidden :as hlayer]
+            [nn.layers.output :as olayer]
+            [nn.config.config :as config]
+            [nn.util :as util]))
 
 (defn create-neural-network [single-tick-data]
 
@@ -34,6 +34,7 @@
     {:input-layer nni
      :hidden-layer nnh
      :output-layer nno}))
+
 (defn calculate-total-error
   "in output neurons, calculate error between output (start with bid) and actual bid"
   [nlayer next-tick]
@@ -42,6 +43,7 @@
         actual-ask (-> next-tick second Double/parseDouble)
         ask-error (- calculated-ask actual-ask)]
     ask-error))
+
 (defn propogate-error
   "Propagate error back through the neural network"
   [neural-network total-error]
@@ -58,6 +60,7 @@
         pderiv (:partial-derivative edge-weight)]
     (merge edge-weight
       {:weight (* -1 update-constant pderiv)})))
+
 (defn update-weights
   "update the weights of the neural net"
   [neuralnet learning-constant]
