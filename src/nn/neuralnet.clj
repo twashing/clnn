@@ -88,7 +88,10 @@
           terror (calculate-total-error (:output-layer ff-nn) next-tick) ;; total error
 ]
 
-      (pprint/pprint (str "total-error[" terror "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn))) "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
+      (pprint/pprint
+        (str "total-error[" terror
+             "] / calculated-value[" (:calculated-value (first (:output-layer ff-nn)))
+             "] / actual-value[" (-> next-tick second Double/parseDouble) "]"))
 
       ;; ** CHECK if finished
       (if (or (< (mtower/abs terror) target-error) (> count 100))
@@ -109,29 +112,30 @@
         next-tick (first init-data)
         nnetwork (create-neural-network next-tick)
         tdata (rest init-data)]
+
     (train nnetwork
       tdata
       learning-constant
       target-error)))
 
-(defn thing []
+(comment
 
   (def nn2 (kickoff-training 0.02 0.02))
   (pprint/pprint nn2)
 
-    ;; create neural network 
+  ;; create neural network 
   (def train-data (config/load-train-data))
   (def first-tick (second train-data))
   (def neural-network (create-neural-network first-tick))
 
-    ;; feed inputs forward
+  ;; feed inputs forward
   (def nn (feed-forward neural-network))
 
-    ;; get total error
+  ;; get total error
   (def next-tick (nth train-data 2))
   (def terror (calculate-total-error (:output-layer nn) next-tick))
 
-    ;; propagate error back through the neural network
+  ;; propagate error back through the neural network
   (def nn-back (propogate-error nn terror))
 
   (pprint/pprint (:output-layer nn))
@@ -139,16 +143,16 @@
   (pprint/pprint nn-back)
   (pprint/pprint neural-network)
 
-    ;; adjust weights for input, hidden and output values... 
+  ;; adjust weights for input, hidden and output values... 
   (def nn-wupdate (update-weights nn-back 1.2))
 
   (pprint/pprint (:output-layer nn-back))
   (pprint/pprint (:output-layer nn-wupdate))
   (pprint/pprint nn-wupdate)
 
-    ;; train until an acceptable margin of error
-    ;; ...
+  ;; train until an acceptable margin of error
+  ;; ...
 
-    ;;(def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
+  (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
 )
 
