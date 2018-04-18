@@ -17,6 +17,7 @@
 
   (merge input-map {:weight (rand)
                     :id (util/generate-id)}))
+
 (defn create-input-layer
   "Creating a neuron for each input value"
   [inputs]
@@ -29,6 +30,7 @@
      (create-input-neuron {:key :bvolume :value (->> (nth inputs 3) Double/parseDouble (normalize-data 1000000))})
      (create-input-neuron {:key :avolume :value (->> (nth inputs 4) Double/parseDouble (normalize-data 1000000))})]))
 
+
 ;; CALCULATE VALUES
 (defn calculate-value [neural-layer]
 
@@ -38,6 +40,7 @@
                 calculated (* val wei)]
            (merge ech {:calculated-value val})))
     neural-layer))
+
 
 ;; CALCULATE ERROR
 (defn calculate-error

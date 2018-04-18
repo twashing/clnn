@@ -3,7 +3,8 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [clojure-csv/clojure-csv "2.0.2"]
                  [clj-time "0.12.0"]
-                 [incanter "1.9.1"]
+                 #_[incanter "1.9.1"]
+                 [incanter/incanter-core "1.9.2"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  #_[org.encog/encog-core "3.1.0"]   ;; official encog 3.1 release
                  #_[clojure-encog "0.4.1-SNAPSHOT"]]

@@ -85,8 +85,9 @@
 
     (let [next-tick (first train-data)        ;; next tick
           ff-nn (feed-forward neural-network) ;; feed forward
-          terror (calculate-total-error (:output-layer ff-nn) next-tick) ;; total error
-]
+
+          ;; total error
+          terror (calculate-total-error (:output-layer ff-nn) next-tick)]
 
       (pprint/pprint
         (str "total-error[" terror
@@ -123,7 +124,7 @@
   (def nn2 (kickoff-training 0.02 0.02))
   (pprint/pprint nn2)
 
-  ;; create neural network 
+  ;; create neural network
   (def train-data (config/load-train-data))
   (def first-tick (second train-data))
   (def neural-network (create-neural-network first-tick))
@@ -143,7 +144,7 @@
   (pprint/pprint nn-back)
   (pprint/pprint neural-network)
 
-  ;; adjust weights for input, hidden and output values... 
+  ;; adjust weights for input, hidden and output values...
   (def nn-wupdate (update-weights nn-back 1.2))
 
   (pprint/pprint (:output-layer nn-back))
@@ -153,6 +154,4 @@
   ;; train until an acceptable margin of error
   ;; ...
 
-  (def hist (conj iteration-history { :tick-data next-tick :neural-network nn }))
-)
-
+  #_(def hist (conj iteration-history { :tick-data next-tick :neural-network nn })))

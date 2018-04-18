@@ -9,6 +9,7 @@
             [clj-time.format :as cformat]
             [clojure.pprint :as pprint]))
 
+
 (fact "load config training file; ensure first tickis as expected"
   (-> (config/load-train-data) nil? not) => true)
 
@@ -50,8 +51,8 @@
 
     1 => 1))
 
-(fact "test the linear combiner function; I expect to see these output values
-        
+#_(fact "test the linear combiner function; I expect to see these output values
+
         :time 1335902400676 * 0.90 => 1202312160608.4; 1335902400676  is the long value of #<DateTime 2012-05-01T20:00:00.676Z>
         :bid 1.32379 * 0.68 => 0.9001772
         :ask 1.32390 * 0.64 => 0.847296
@@ -69,8 +70,5 @@
 
       (println (str "Hidden Neuron value: " value))
       (println (str "Hidden Neuron activation-value: " (hlayer/activation value))))
-    
-    (= 1 1) => true
 
-    ))
-
+    (= 1 1) => true))
